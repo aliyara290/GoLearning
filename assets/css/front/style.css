@@ -11,8 +11,10 @@
 }
 
 
+
 html {
   font-size: 10px;
+  scroll-behavior: smooth;
 }
 :root {
   --dark: #0a0a0a;
