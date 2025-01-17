@@ -8,9 +8,9 @@ use PDOException;
 class Crud {
     private static $pdo;
 
+
     public function __construct() {
         self::$pdo = Database::getInstance();
-        echo "hey world";
     }
 
     public static function create($table, $data) {
@@ -69,7 +69,7 @@ class Crud {
     }
 
     public static function readAll($table) {
-        $sql = "SELECT * FROM $table";
+        $sql = "SELECT * FROM $table ORDER BY id";
         try {
             $stmt = self::$pdo->prepare($sql);
             $stmt->execute();
@@ -94,3 +94,5 @@ class Crud {
     }
     
 }
+
+new Crud();

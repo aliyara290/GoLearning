@@ -35,7 +35,7 @@
                         </a>
                     </li>
                     <li class="page_item active">
-                        <a href="./articles.php">
+                        <a href="./courses.php">
                             <span><i class="fa-solid fa-newspaper"></i></span>
                             <span>Courses</span>
                             
@@ -71,44 +71,44 @@
                 </nav>
             </header>
             
-            <div class="pending__articles">
+            <div class="pending__courses">
                 <div class="heading">
                     <h1>Pending courses</h1>
                 </div>
 
-                <div class="pend__articles-content">
-                <ul class="pend__articles-list">
+                <div class="pend__courses-content">
+                <ul class="pend__courses-list">
                     <?php 
-                    if (!empty($articles)) {
-                        foreach ($articles as $article): ?>
-                            <li class="pend__articles-card">
+                    if (!empty($courses)) {
+                        foreach ($courses as $course): ?>
+                            <li class="pend__courses-card">
                                 <?php 
-                                if ($article["featuredImage"] !== NULL): ?>
-                                    <div class="pend__article-cover">
-                                        <img src="../<?= $article["featuredImage"] ?>" alt="">
+                                if ($course["featuredImage"] !== NULL): ?>
+                                    <div class="pend__course-cover">
+                                        <img src="../<?= $course["featuredImage"] ?>" alt="">
                                     </div>
                                 <?php endif; ?>
                                 <div class="art__btm">
                                     <div class="artc__auhtor">
                                         <div class="author__picture-ad">
-                                            <span><?= substr($article["firstName"], 0, 1) . substr($article["lastName"], 0, 1) ?></span>
+                                            <span><?= substr($course["firstName"], 0, 1) . substr($course["lastName"], 0, 1) ?></span>
                                         </div>
                                         <div class="atcrl__dets">
                                             <div class="author__fullname">
-                                                <p><?= $article["firstName"] . " " . $article["lastName"] ?></p>
+                                                <p><?= $course["firstName"] . " " . $course["lastName"] ?></p>
                                             </div>
                                             <div class="date__created-ar">
-                                                <p><?= date('Y-m-d', strtotime($article["createdAt"])) ?></p>
+                                                <p><?= date('Y-m-d', strtotime($course["createdAt"])) ?></p>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="pend__article-title">
-                                        <h4><?= $article["title"] ?></h4>
+                                    <div class="pend__course-title">
+                                        <h4><?= $course["title"] ?></h4>
                                     </div>
-                                    <div class="article__tags-ar">
+                                    <div class="course__tags-ar">
                                         <ul>
                                             <?php 
-                                            $tags = array_map('trim', explode(",", $article["tags"])); 
+                                            $tags = array_map('trim', explode(",", $course["tags"])); 
                                             foreach ($tags as $tag): ?>
                                                 <li>
                                                     <span>#<?= $tag ?></span>
@@ -116,17 +116,17 @@
                                             <?php endforeach; ?>
                                         </ul>
                                     </div>
-                                    <div class="article__content-ar">
-                                        <p><?= $article["content"] ?></p>
+                                    <div class="course__content-ar">
+                                        <p><?= $course["content"] ?></p>
                                     </div>
-                                    <div class="acc_ref-article">
+                                    <div class="acc_ref-course">
                                         <div class="accept_art pend_btn">
-                                            <a href="./articles.php?action=accept&artcId=<?= $article["articleId"] ?>">
+                                            <a href="./courses.php?action=accept&artcId=<?= $course["courseId"] ?>">
                                                 <i class="fa-solid fa-check"></i>
                                             </a>
                                         </div>
                                         <div class="refuse_art pend_btn">
-                                            <a href="./articles.php?action=deleteArticle&articleId=<?= $article["articleId"] ?>">
+                                            <a href="./courses.php?action=deletecourse&courseId=<?= $course["courseId"] ?>">
                                                 <i class="fa-solid fa-close"></i>
                                             </a>
                                         </div>
@@ -135,7 +135,7 @@
                             </li>
                         <?php endforeach; 
                     } else { ?>
-                        <div class="no__articles-pend">
+                        <div class="no__courses-pend">
                             <p>No pending courses to show!</p>
                         </div>
                     <?php } ?>

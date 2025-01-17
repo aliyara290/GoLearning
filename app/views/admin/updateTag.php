@@ -1,3 +1,10 @@
+<?php 
+require_once __DIR__ . '/../../../vendor/autoload.php';
+use App\Controllers\TagController;
+$tagController = new TagController();
+$tag = $tagController->readTagById();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -33,7 +40,7 @@
               </a>
             </li>
             <li class="page_item">
-              <a href="./articles.php">
+              <a href="./courses.php">
                 <span><i class="fa-solid fa-newspaper"></i></span>
                 <span>Courses</span>
               </a>
@@ -72,11 +79,11 @@
             <h1>Update tag</h1>
           </div>
           <div class="add__cls">
-            <form action="updateTag.php" method="post" class="form__content">
+            <form action="./updateTag.php" method="POST" class="form__content">
               <div class="form__input">
-                  <input type="hidden" value="Tag Name" name="tagId" />
-                <label for="new_tag-name">New tag name</label>
-                <input type="text" name="new_tag-name" placeholder="New tag name" />
+                  <input type="hidden" name="tagId" value=<?= $_GET["tagId"]?> />
+                <label for="updateTagName">New tag name</label>
+                <input type="text" name="updateTagName" value=<?= $tag[0]["name"] ?> placeholder="New tag name" />
               </div>
               <div class="submit_btn">
                 <button type="submit" name="update" style="background-color: green;">Update</button>

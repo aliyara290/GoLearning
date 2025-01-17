@@ -33,7 +33,7 @@
               </a>
             </li>
             <li class="page_item">
-              <a href="./articles.php">
+              <a href="./courses.php">
                 <span><i class="fa-solid fa-newspaper"></i></span>
                 <span>Courses</span>
               </a>

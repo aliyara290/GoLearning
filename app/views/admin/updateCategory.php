@@ -1,3 +1,9 @@
+<?php 
+require_once __DIR__ . '/../../../vendor/autoload.php';
+use App\Controllers\CategoryController;
+$categoryController = new CategoryController();
+$category = $categoryController->readCategoryById();
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -33,7 +39,7 @@
               </a>
             </li>
             <li class="page_item">
-              <a href="./articles.php">
+              <a href="./courses.php">
                 <span><i class="fa-solid fa-newspaper"></i></span>
                 <span>Courses</span>
               </a>
@@ -74,9 +80,9 @@
           <div class="add__cls">
             <form action="updateCategory.php" method="post" class="form__content">
               <div class="form__input">
-                  <input type="hidden" value="CateforyName" name="catId" />
-                <label for="new_category-name">New tag name</label>
-                <input type="text" name="new_category-name" placeholder="New category name" />
+                  <input type="hidden" value=<?= $_GET["categoryId"]?> name="categoryId" />
+                <label for="updateCategoryName">New tag name</label>
+                <input type="text" name="updateCategoryName" value=<?= $category[0]["name"] ?> placeholder="New category name" />
               </div>
               <div class="submit_btn">
                 <button type="submit" name="update" style="background-color: green;">Update</button>

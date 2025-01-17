@@ -1,7 +1,5 @@
 <?php 
-
 namespace App\Models;
-require_once __DIR__ . '/../../vendor/autoload.php';
 
 use App\Core\Crud;
 
@@ -13,30 +11,38 @@ class Tag {
     public function setId(int $id) {
         $this->id = $id;
     }
-    public function gettId() {
+    public function getId(): int {
         return $this->id;
     }
 
     public function setTagName(string $tagName) {
         $this->tagName = $tagName;
     }
-    public function getTagName() {
+    public function getTagName(): string {
         return $this->tagName;
     }
 
     public function createTag() {
-        Crud::create($this->table, ["name" => $this->tagName]);
+        return Crud::create($this->table, ["name" => $this->tagName]);
     }
+
     public function updateTag() {
-        Crud::update($this->table, ["name" => $this->tagName], "id", $this->id);
+        return Crud::update($this->table, ["name" => $this->tagName], "id", $this->id);
     }
+
     public function deleteTag() {
-        Crud::delete($this->table, "id", $this->id);
+        return Crud::delete($this->table, "id", $this->id);
     }
+
     public function readAllTags() {
-        Crud::readAll($this->table);
+        return Crud::readAll($this->table);
     }
+
+    public function readTagById() {
+        return Crud::readByCondition($this->table, "id", $this->id);
+    }
+
     public function countTags() {
-        Crud::count($this->table);
+        return Crud::count($this->table);
     }
 }

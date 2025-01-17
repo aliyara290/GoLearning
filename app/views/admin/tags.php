@@ -1,3 +1,9 @@
+<?php 
+require_once __DIR__ . '/../../../vendor/autoload.php';
+use App\Controllers\TagController;
+$tagController = new TagController();
+$tags = $tagController->readAllTags();
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -33,7 +39,7 @@
               </a>
             </li>
             <li class="page_item">
-              <a href="./articles.php">
+              <a href="./courses.php">
                 <span><i class="fa-solid fa-newspaper"></i></span>
                 <span>Courses</span>
               </a>
@@ -72,7 +78,7 @@
             <h1>Add new tag</h1>
           </div>
           <div class="add__cls">
-            <form action="../../controllers/TagController.php" method="post" class="form__content">
+            <form action="../../controllers/TagController.php" method="POST" class="form__content">
               <div class="form__input">
                 <label for="tag__name">Tag Name</label>
                 <!-- <input type="hidden" name="tagId" /> -->
@@ -86,26 +92,35 @@
         </div>
         <section class="cls__section">
           <div class="heading">
-            <h1>Tags list ()</h1>
+            <h1>Tags list (<?= count($tags) ?>)</h1>
           </div>
           <ul class="cls__list">
-                <li class="cls__card">
-                  <div class="cls__name">
-                    <span><span>#</span><span>PHP</span></span>
-                  </div>
-                  <div class="cls__management">
-                    <span>
-                      <a href="./updateTag.php?id=">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                      </a>
-                    </span>
-                    <span>
-                      <a href="./tags.php?action=deleteTag&tagId=">
-                        <i class="fa-solid fa-trash-can"></i>
-                      </a>
-                    </span>
-                  </div>
-                </li>
+            <?php 
+            if(isset($tags)):?>
+            <?php 
+            foreach($tags as $tag): ?>
+            <li class="cls__card">
+              <div class="cls__name">
+                <span><span>#</span><span><?= $tag["name"]?></span></span>
+              </div>
+              <div class="cls__management">
+                <span>
+                  <a href="./updateTag.php?action=updateTag&tagId=<?= $tag["id"] ?>">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </a>
+                </span>
+                <span>
+                  <a href="./tags.php?action=deleteTag&tagId=<?= $tag["id"] ?>">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </a>
+                </span>
+              </div>
+            </li>
+            <?php endforeach ?>
+            <?php 
+            else: ?>
+            <p>No tags to show!</p>
+            <?php endif ?>
           </ul>
         </section>
       </main>

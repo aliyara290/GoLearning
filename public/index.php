@@ -1,17 +1,15 @@
 <?php 
-require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . "/../vendor/autoload.php";
 
-use App\Core\Router;
+// use App\Core\Application;
 
-$router = new Router();
+// $app = new Application();
 
-require_once __DIR__ . '/../routes/web.php';
 
-$router->setNotFound(function () {
-    http_response_code(404);
-    echo "404 - Page Not Found";
-});
+// $app->router->get("/", function() {
+//     return "hello ali, that's works!";
+// });
+// $app->router->get("/admin/dashboard", "dashboard");
+// $app->router->get("/admin/categories", "categories");
 
-$url = parse_url($_SERVER['REQUEST_URI'])['path'];
-echo $url;
-$router->resolve($url);
+// $app->run();

@@ -240,17 +240,17 @@ body {
   .manage-col span:last-child i {
     color: #f31515;
   }
-/* pending articles */
+/* pending courses */
 
-  .pending__articles {
+  .pending__courses {
     padding: 0 3rem;
   }
-  .pend__articles-list {
+  .pend__courses-list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
   }
-  .pend__articles-card {
+  .pend__courses-card {
     width: 100%;
     min-height: 25rem;
     max-height: 25rem;
@@ -264,7 +264,7 @@ body {
     padding-bottom: 1.5rem;
     position: relative;
   }
-  .acc_ref-article {
+  .acc_ref-course {
     position: absolute;
     top: 1.5rem;
     right: 1.5rem;
@@ -296,7 +296,7 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
   }
-  .pend__article-cover {
+  .pend__course-cover {
     /* position: sticky;
     top: 0; */
     width: 100%;
@@ -304,7 +304,7 @@ body {
     max-height: 16rem;
     border-bottom: 1.5px solid #0000003e;
   }
-  .pend__article-cover img {
+  .pend__course-cover img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -351,44 +351,44 @@ body {
     color: var(--dark);
     font-size: 1.1rem;
   }
-  .pend__article-title {
+  .pend__course-title {
     padding: 0 1.5rem;
     font-size: 1.8rem;
     font-weight: 550;
     color: var(--blue);
     padding-left: 5.5rem;
   }
-  .article__category-ar {
+  .course__category-ar {
     padding: 0 1.5rem;
     
   }
-  .article__category-ar span {
+  .course__category-ar span {
     font-size: 1.4rem;
     color: #04a304;
 
   }
-  .article__tags-ar {
+  .course__tags-ar {
     padding: 0 1.5rem;
   }
-  .article__tags-ar ul {
+  .course__tags-ar ul {
     display: flex;
     flex-wrap: wrap;
     gap: 0.8rem;
   }
-  .article__tags-ar li {
+  .course__tags-ar li {
     padding: 0.5rem 1rem;
     border-radius: 1rem;
     background-color: #828ba2;
     color: var(--light);
     font-size: 1rem;
   }
-  .article__content-ar {
+  .course__content-ar {
     padding: 0 1.5rem;
     font-size: 1.3rem;
     text-align: justify;
   }
 
-  .no__articles-pend {
+  .no__courses-pend {
     font-size: 1.6rem;
     color: var(--dark);
   }

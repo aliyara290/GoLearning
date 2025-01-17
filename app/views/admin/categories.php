@@ -1,3 +1,9 @@
+<?php 
+require_once __DIR__ . '/../../../vendor/autoload.php';
+use App\Controllers\CategoryController;
+$categoryController = new CategoryController();
+$categories = $categoryController->readAllCategories();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,7 +40,7 @@
             </a>
           </li>
           <li class="page_item">
-            <a href="./articles.php">
+            <a href="./courses.php">
               <span><i class="fa-solid fa-newspaper"></i></span>
               <span>Courses</span>
             </a>
@@ -73,7 +79,7 @@
           <h1>Add new Category</h1>
         </div>
         <div class="add__cls">
-          <form action="categories.php" method="post" class="form__content">
+          <form action="../../controllers/CategoryController.php" method="POST" class="form__content">
             <div class="form__input">
               <label for="category__name">Category Name</label>
               <input type="text" name="categoryName" placeholder="Tag name" />
@@ -85,28 +91,37 @@
         </div>
       </div>
       <section class="cls__section">
-        <div class="heading">
-          <h1>Categories list ()</h1>
-        </div>
-        <ul class="cls__list">
-          <li class="cls__card">
-            <div class="cls__name">
-              <span>frontend</span>
-            </div>
-            <div class="cls__management">
-              <span>
-                <a href="./updateCategory.php?id=">
-                  <i class="fa-solid fa-pen-to-square"></i>
-                </a>
-              </span>
-              <span>
-                <a href="./categories.php?action=deleteCategory&catId=">
-                  <i class="fa-solid fa-trash-can"></i>
-                </a>
-              </span>
-            </div>
-          </li>
-        </ul>
+      <div class="heading">
+            <h1>Categories list (<?= count($categories) ?>)</h1>
+          </div>
+          <ul class="cls__list">
+            <?php 
+            if(isset($categories)):?>
+            <?php 
+            foreach($categories as $category): ?>
+            <li class="cls__card">
+              <div class="cls__name">
+                <span><?= $category["name"]?></span>
+              </div>
+              <div class="cls__management">
+                <span>
+                  <a href="./updateCategory.php?action=updateCategory&categoryId=<?= $category["id"] ?>">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </a>
+                </span>
+                <span>
+                  <a href="./categories.php?action=deleteCategory&categoryId=<?= $category["id"] ?>">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </a>
+                </span>
+              </div>
+            </li>
+            <?php endforeach ?>
+            <?php 
+            else: ?>
+            <p>No tags to show!</p>
+            <?php endif ?>
+          </ul>
       </section>
     </main>
   </div>

@@ -37,7 +37,7 @@
                         </a>
                     </li>
                     <li class="page_item">
-                        <a href="./articles.php">
+                        <a href="./courses.php">
                             <span><i class="fa-solid fa-newspaper"></i></span>
                             <span>Courses</span>
                             
@@ -112,7 +112,7 @@
             </div>
             <div class="table-container" style="padding: 0 3rem;">
             <div class="heading">
-                    <h1>Top 5 articles</h1>
+                    <h1>Top 5 courses</h1>
                 </div>
             <table class="user-table">
               <thead class="table-head">
