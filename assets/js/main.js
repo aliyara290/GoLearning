@@ -26,9 +26,7 @@ fileInputs.forEach((fileInput, index) => {
       console.log(fileNames[index].textContent = this.files[0].name);
     } else {
       fileNames[index].textContent = 'No file chosen';
-      console.log("yara");
     }
-    console.log("clicked");
 
   });
 });
@@ -51,3 +49,32 @@ function liveSearch() {
     resultsContainer.innerHTML = '';
   }
 }
+
+
+// new course page 
+
+const selectOption = document.querySelectorAll(".select__choix");
+const videoOption = document.querySelectorAll(".video__option");
+const videoOptionInput = document.querySelectorAll(".video__option .clr_vl");
+const textOption = document.querySelectorAll(".text__option");
+const textOptionTextarea = document.querySelectorAll(".text__option .clr_vl");
+
+selectOption.forEach((opt, index) => {
+  opt.addEventListener("change", () => {
+    let value = opt.value;
+    switch (value) {
+      case "video":
+        videoOption[index].classList.add("active");
+        textOption[index].classList.remove("active");
+        textOptionTextarea.value = "";
+        break;
+        case "text":
+          videoOption[index].classList.remove("active");
+        textOption[index].classList.add("active");
+        videoOptionInput.textContent = "";
+
+        break;
+      }
+    });
+  });
+console.log("hey");
