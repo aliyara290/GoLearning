@@ -21,7 +21,6 @@ class Database {
         try {
             $this->pdo = new PDO($dsn, $username, $password);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            echo "success";
         } catch (PDOException $error) {
             echo "failed to connect: " . $error->getMessage();
         }
@@ -34,5 +33,3 @@ class Database {
         return self::$instance->pdo;
     }
 }
-
-Database::getInstance();
