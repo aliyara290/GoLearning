@@ -1,126 +1,68 @@
-<?php 
+<?php
 
 namespace App\Models;
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
 use Config\Database;
+use App\Core\Validator;
+
 use PDO;
 use PDOException;
 
-abstract class User {
+abstract class User
+{
     protected PDO $pdo;
-    protected string $firstName;
-    protected string $lastName;
+    protected ?string $firstName = null;
+    protected ?string $lastName = null;
     protected ?string $picture = null;
-    protected string $email;
-    protected string $username;
-    protected string $password;
-    protected string $role;
+    protected ?string $email = null;
+    protected ?string $username = null;
+    protected ?string $password = null;
+    protected ?string $role = null;
     protected ?string $work = null;
     protected ?string $bio = null;
 
-    public function __construct() {
+    public function __construct(
+        ?string $role = null,
+        ?string $firstName = null,
+        ?string $lastName = null,
+        ?string $email = null,
+        ?string $username = null,
+        ?string $password = null,
+    ) {
         $this->pdo = Database::getInstance();
-    }
-
-    public function getFirstName(): string {
-        return $this->firstName;
-    }
-
-    public function setFirstName(string $firstName): void {
+        $this->role = $role;
         $this->firstName = $firstName;
-    }
-
-    public function getLastName(): string {
-        return $this->lastName;
-    }
-
-    public function setLastName(string $lastName): void {
         $this->lastName = $lastName;
-    }
-
-    public function getPicture(): ?string {
-        return $this->picture;
-    }
-
-    public function setPicture(?string $picture): void {
-        $this->picture = $picture;
-    }
-
-    public function getEmail(): string {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): void {
         $this->email = $email;
-    }
-
-    public function getUsername(): string {
-        return $this->username;
-    }
-
-    public function setUsername(string $username): void {
         $this->username = $username;
-    }
-
-    public function getPassword(): string {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): void {
         $this->password = $password;
     }
 
-    public function getRole(): string {
-        return $this->role;
-    }
 
-    public function setRole(string $role): void {
-        $this->role = $role;
-    }
 
-    public function getWork(): ?string {
-        return $this->work;
-    }
-
-    public function setWork(?string $work): void {
-        $this->work = $work;
-    }
-
-    public function getBio(): ?string {
-        return $this->bio;
-    }
-
-    public function setBio(?string $bio): void {
-        $this->bio = $bio;
-    }
-    
-    public function register() {
+    public function register()
+    {
         $passwrodHash = password_hash($this->password, PASSWORD_BCRYPT);
-        $sql = "INSERT INTO users (firstName, lastName, email, username, password, role) VALUES (:firstName, :lastName, :email, :username, :password, :role)";
+        $sql = "INSERT INTO users (firstName, lastName, email, username, password, role, status) VALUES (:firstName, :lastName, :email, :username, :password, :role, :status)";
         $data = [
             ":firstName" => $this->firstName,
             ":lastName" => $this->lastName,
             ":email" => $this->email,
             ":username" => $this->username,
             ":password" => $passwrodHash,
-            ":role" => $this->role
+            ":role" => $this->role,
+            ":status" => ($this->role === "teacher") ? "pending" : "active",
         ];
         try {
             $stmt = $this->pdo->prepare($sql);
             $done = $stmt->execute($data);
             return $done;
-        } catch(PDOException $error) {
+        } catch (PDOException $error) {
             echo "failed to register: " . $error->getMessage();
         }
     }
 
-    public function login() {
-
-    }
-
-    abstract public function viewProfile();
-
-
-    // abstract function login();
-    // abstract function logout();
-    // abstract function viewProfile();
+    // abstract public function viewProfile();
 }
