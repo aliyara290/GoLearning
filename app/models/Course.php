@@ -20,7 +20,7 @@ class Course
     private string $cover;
     private string $categoryId;
     private array $tags = [];
-    private int $teacherId = 1;
+    private int $teacherId;
 
     public function __construct()
     {
@@ -64,6 +64,11 @@ class Course
     public function setTags(array $tags): void
     {
         $this->tags = $tags;
+    }
+
+    public function setTeacherId(int $teacherId): void
+    {
+        $this->teacherId = $teacherId;
     }
 
     public function __call($method, $arguments)
@@ -153,6 +158,37 @@ class Course
     }
     
 
+    public function readAllCourses($status) {
+        $sql = "SELECT 
+        c.*,  
+        u.firstName, 
+        u.lastName,
+        u.picture,
+        cat.name AS category_name, 
+        GROUP_CONCAT(t.name SEPARATOR ', ') AS tags
+      FROM courses c
+      JOIN users u ON c.teacher_id = u.id
+      LEFT JOIN categories cat ON c.category_id = cat.id
+      LEFT JOIN course_tags ct ON c.id = ct.course_id
+      LEFT JOIN tags t ON ct.tag_id = t.id
+      WHERE c.status = :status
+      GROUP BY c.id, u.firstName, u.lastName, cat.name
+      ORDER BY c.created_at DESC
+      LIMIT 0,6;";
+
+        $data = [
+            ":status" => $status
+        ];
+    
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($data);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $error) {
+            error_log("Database error: " . $error->getMessage());
+            return false;
+        }
+    }
     public function readCourseById() {
         if (empty($this->id)) {
             echo ("Course ID is not set.");
@@ -207,5 +243,23 @@ class Course
         } catch (PDOException $error) {
             echo "Failed to insert data into course_tags table: " . $error->getMessage();
         }
+    }
+
+    public function updateCourseStatus($status) {
+        $sql = "UPDATE courses SET status = :status WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $check = $stmt->execute([
+            ':status' => $status,
+            ':id' => $this->id
+        ]);
+        return $check;
+    }
+
+    public function deleteCourse()
+    {
+        $sql = "DELETE FROM courses WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $check = $stmt->execute([':id' => $this->id]);
+        return $check;
     }
 }
