@@ -1,5 +1,4 @@
 CREATE DATABASE udemyPlatfom;
-DROP DATABASE udemyPlatfom;
 
 USE udemyPlatfom;
 
@@ -12,6 +11,7 @@ CREATE TABLE users (
     username VARCHAR(60) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role ENUM('student', 'teacher', 'admin') NOT NULL,
+    status ENUM('active', 'suspended', 'pending'),
     joined TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     work VARCHAR(30),
     bio TEXT
@@ -73,20 +73,21 @@ CREATE TABLE comments (
     FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-
--- Insert records into users
-INSERT INTO users (firstName, lastName, picture, email, username, password, role, work, bio)
-VALUES
-('Ali', 'Yara', 'https://images.unsplash.com/photo-1502767089025-6572583495d0?crop=entropy&cs=tinysrgb&w=640', 'ali@example.com',"aliyara29", 'password1', 'teacher', 'Web Developer', 'Experienced web developer specializing in React and Laravel.'),
-('Sophia', 'Smith', 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&w=640', 'sophia@example.com', "sophia", 'password2', 'student', 'Student', 'Learning programming and web development.'),
-('John', 'Doe', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=tinysrgb&w=640', 'john@example.com', "john", 'password3', 'student', 'Designer', 'Interested in UI/UX design.'),
-('Emma', 'Brown', 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?crop=entropy&cs=tinysrgb&w=640', 'emma@example.com', "emma", 'password4', 'admin', 'Manager', 'Oversees platform operations.'),
-('Mia', 'Johnson', 'https://images.unsplash.com/photo-1517841905240-472988babdf9?crop=entropy&cs=tinysrgb&w=640', 'mia@example.com', "mia", 'password5', 'teacher', 'Data Scientist', 'Teaches machine learning.'),
-('Liam', 'Williams', 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?crop=entropy&cs=tinysrgb&w=640', 'liam@example.com', "liam", 'password6', 'student', 'Engineer', 'Focusing on backend development.'),
-('Ava', 'Taylor', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&w=640', 'ava@example.com', "ava", 'password7', 'teacher', 'Content Creator', 'Expert in digital marketing.'),
-('Noah', 'Jones', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?crop=entropy&cs=tinysrgb&w=640', 'noah@example.com', "noah", 'password8', 'student', 'Freelancer', 'Aspiring full stack developer.'),
-('Olivia', 'Davis', 'https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?crop=entropy&cs=tinysrgb&w=640', 'olivia@example.com', "olivia", 'password9', 'student', 'Writer', 'Exploring creative writing and storytelling.'),
-('James', 'Anderson', 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?crop=entropy&cs=tinysrgb&w=640', 'james@example.com', "james", 'password10', 'teacher', 'Photographer', 'Sharing tips on professional photography.');
+INSERT INTO users (firstName, lastName, picture, email, username, password, role, status, work, bio) VALUES
+('Sara', 'Benali', 'https://source.unsplash.com/100x100/?face,woman', 'sara.benali@example.com', 'sarabenali', 'hashedpassword2', 'teacher', 'active', 'Software Engineer', 'Passionate about teaching and learning new technologies.'),
+('Mohamed', 'El Mansouri', 'https://source.unsplash.com/100x100/?face,man', 'mohamed.elmansouri@example.com', 'mohamedmansouri', 'hashedpassword3', 'student', 'active', 'Computer Science Student', 'Aspiring developer interested in AI and blockchain.'),
+('Fatima', 'Zahra', 'https://source.unsplash.com/100x100/?face,woman', 'fatima.zahra@example.com', 'fatimazahra', 'hashedpassword4', 'student', 'pending', 'Web Designer', 'Creative designer with a passion for modern UI/UX.'),
+('Youssef', 'Haddad', 'https://source.unsplash.com/100x100/?face,man', 'youssef.haddad@example.com', 'youssefhaddad', 'hashedpassword5', 'teacher', 'active', 'Data Scientist', 'Data enthusiast exploring machine learning techniques.'),
+('Asmae', 'El Khalfi', 'https://source.unsplash.com/100x100/?face,woman', 'asmae.elkhalfi@example.com', 'asmaekhalfi', 'hashedpassword6', 'student', 'active', 'Mobile Developer', 'Building apps for Android and iOS platforms.'),
+('Karim', 'Boukhari', 'https://source.unsplash.com/100x100/?face,man', 'karim.boukhari@example.com', 'karimboukhari', 'hashedpassword7', 'student', 'suspended', 'DevOps Engineer', 'Streamlining CI/CD pipelines for web applications.'),
+('Laila', 'Naji', 'https://source.unsplash.com/100x100/?face,woman', 'laila.naji@example.com', 'lailanaji', 'hashedpassword8', 'student', 'active', 'Intern', 'Learning web development and cloud technologies.'),
+('Omar', 'Hassan', 'https://source.unsplash.com/100x100/?face,man', 'omar.hassan@example.com', 'omarhassan', 'hashedpassword9', 'teacher', 'active', 'Cybersecurity Expert', 'Helping companies secure their digital infrastructure.'),
+('Rania', 'Mehdi', 'https://source.unsplash.com/100x100/?face,woman', 'rania.mehdi@example.com', 'raniamehdi', 'hashedpassword10', 'student', 'pending', 'Game Developer', 'Creating immersive gaming experiences.'),
+('Hassan', 'El Amrani', 'https://source.unsplash.com/100x100/?face,man', 'hassan.elamrani@example.com', 'hassanelamrani', 'hashedpassword11', 'teacher', 'pending', 'Mathematics Teacher', 'Passionate about teaching mathematics and solving complex problems.'),
+('Noura', 'Cherkaoui', 'https://source.unsplash.com/100x100/?face,woman', 'noura.cherkaoui@example.com', 'nouracherkaoui', 'hashedpassword12', 'teacher', 'pending', 'Physics Teacher', 'Dedicated to making physics concepts engaging and accessible.'),
+('Anas', 'Bouhadi', 'https://source.unsplash.com/100x100/?face,man', 'anas.bouhadi@example.com', 'anasbouhadi', 'hashedpassword13', 'teacher', 'pending', 'History Teacher', 'Sharing a love for history and cultural heritage with students.'),
+('Siham', 'Oubella', 'https://source.unsplash.com/100x100/?face,woman', 'siham.oubella@example.com', 'sihamoubella', 'hashedpassword14', 'teacher', 'pending', 'Art Teacher', 'Inspiring creativity through art and design lessons.'),
+('Younes', 'Karimi', 'https://source.unsplash.com/100x100/?face,man', 'younes.karimi@example.com', 'youneskarimi', 'hashedpassword15', 'teacher', 'pending', 'Computer Science Teacher', 'Helping students master programming and computational thinking.');
 
 -- Insert records into categories
 INSERT INTO categories (name) 
@@ -96,6 +97,7 @@ VALUES
 ('UI/UX Design'), 
 ('Photography'), 
 ('Digital Marketing');
+
 
 -- Insert records into courses
 INSERT INTO courses (title, slug, description, content, cover, status, category_id, teacher_id)
@@ -142,3 +144,42 @@ VALUES
 (1, 3, 'Great content but could use more examples.'),
 (2, 6, 'The data science material is thorough and detailed.'),
 (3, 9, 'Perfect course for anyone starting in UI/UX design!');
+
+
+
+INSERT INTO courses (title, slug, description, video, content, cover, status, category_id, teacher_id) VALUES
+('Introduction to Web Development', 'introduction-to-web-development', 'Learn the basics of HTML, CSS, and JavaScript to kickstart your web development journey.', 'https://example.com/videos/web-development.mp4', 'Comprehensive guide to modern web development.', 'https://source.unsplash.com/600x400/?technology,web', 'active', 1, 2),
+('Mastering Python Programming', 'mastering-python-programming', 'Dive deep into Python programming with practical examples and projects.', 'https://example.com/videos/python.mp4', 'Step-by-step guide to Python.', 'https://source.unsplash.com/600x400/?python,programming', 'active', 2, 2),
+('Fundamentals of Machine Learning', 'fundamentals-of-machine-learning', 'Understand the core concepts of machine learning and its applications.', 'https://example.com/videos/machine-learning.mp4', 'Introductory material on ML.', 'https://source.unsplash.com/600x400/?machine-learning,ai', 'pending', 3, 2),
+('Creative Graphic Design', 'creative-graphic-design', 'Learn the art of graphic design with practical tools like Photoshop and Illustrator.', 'https://example.com/videos/graphic-design.mp4', 'Creative tips and tricks for graphic design.', 'https://source.unsplash.com/600x400/?design,creative', 'draft', 4, 2),
+('Building RESTful APIs with Laravel', 'building-restful-apis-with-laravel', 'Master API development using the Laravel framework.', 'https://example.com/videos/laravel.mp4', 'Detailed course on API building.', 'https://source.unsplash.com/600x400/?laravel,php', 'active', 5, 2),
+('Data Visualization with Tableau', 'data-visualization-with-tableau', 'Learn to create compelling data visualizations with Tableau.', 'https://example.com/videos/tableau.mp4', 'Guidance on using Tableau effectively.', 'https://source.unsplash.com/600x400/?data,visualization', 'pending', 2, 2),
+('React.js for Beginners', 'reactjs-for-beginners', 'Get started with React.js to create dynamic web applications.', 'https://example.com/videos/react.mp4', 'Comprehensive guide to React basics.', 'https://source.unsplash.com/600x400/?react,web', 'active', 1, 2),
+('Advanced CSS Techniques', 'advanced-css-techniques', 'Explore advanced CSS concepts to create stunning web designs.', 'https://example.com/videos/css.mp4', 'In-depth guide on advanced CSS.', 'https://source.unsplash.com/600x400/?css,web-design', 'draft', 1, 2),
+('Introduction to DevOps', 'introduction-to-devops', 'Understand DevOps principles and practices to streamline software development.', 'https://example.com/videos/devops.mp4', 'Beginner-friendly guide to DevOps.', 'https://source.unsplash.com/600x400/?devops,technology', 'pending', 3, 2),
+('Cloud Computing Basics', 'cloud-computing-basics', 'Learn the fundamentals of cloud computing and its applications.', 'https://example.com/videos/cloud-computing.mp4', 'Introductory material on cloud computing.', 'https://source.unsplash.com/600x400/?cloud,computing', 'active', 4, 2);
+
+
+INSERT INTO course_tags (course_id, tag_id)
+VALUES
+(7, 1), -- Web Development for Introduction to Web Development
+(7, 2), -- JavaScript for Introduction to Web Development
+(8, 4), -- Data Science for Mastering Python Programming
+(8, 5), -- Machine Learning for Mastering Python Programming
+(9, 5), -- Machine Learning for Fundamentals of Machine Learning
+(9, 4), -- Data Science for Fundamentals of Machine Learning
+(10, 6), -- UI/UX for Creative Graphic Design
+(10, 7), -- Design for Creative Graphic Design
+(11, 3), -- Programming for Building RESTful APIs with Laravel
+(11, 1), -- Web Development for Building RESTful APIs with Laravel;
+(12, 1), -- Web Development for Data Visualization with Tableau
+(12, 4), -- Data Science for Data Visualization with Tableau
+(12, 6), -- UI/UX for Data Visualization with Tableau
+(13, 1), -- Web Development for React.js for Beginners
+(13, 2), -- JavaScript for React.js for Beginners
+(14, 2), -- JavaScript for Advanced CSS Techniques
+(14, 6), -- UI/UX for Advanced CSS Techniques
+(15, 3), -- Programming for Introduction to DevOps
+(15, 1), -- Web Development for Introduction to DevOps
+(16, 4), -- Data Science for Cloud Computing Basics
+(16, 3); -- Programming for Cloud Computing Basics
