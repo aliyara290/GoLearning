@@ -5,7 +5,7 @@
         <div class="logo">
           <a href="../index.php">
 
-            <h1>Medium</h1>
+           <h1><span>Go</span>Learning</h1>
           </a>
         </div>
       </div>
@@ -93,17 +93,11 @@
       </nav>
     </header>
 
-
-
-
-    <!-- index.php header -->
-
-
     <header class="header_content">
       <div class="left__side-nav">
         <div class="logo">
           <a href="./index.php">
-            <h1>Medium</h1>
+           <h1><span>Go</span>Learning</h1>
            
           </a>
         </div>

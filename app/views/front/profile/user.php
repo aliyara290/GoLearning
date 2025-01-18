@@ -25,7 +25,7 @@ if (!isset($_SESSION["user"])) {
         <div class="logo">
           <a href="../index.php">
 
-            <h1>Medium</h1>
+           <h1><span>Go</span>Learning</h1>
           </a>
         </div>
        

@@ -1,9 +1,9 @@
 <?php 
 require __DIR__ . "/../../controllers/UserController.php";
-if (isset($_SESSION["user"])) {
-    header("Location: /deV.io/src/views/front/index.php");
-    exit();
-  } 
+use App\Controllers\UserController;
+
+$userController = new UserController();
+$userController->login();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,7 +14,6 @@ if (isset($_SESSION["user"])) {
     <title>Sign in</title>
 </head>
 <body>
-<?php include "../../includes/header.php" ?>
     <section class="form__section">
       
           <div class="form__content">
@@ -23,7 +22,7 @@ if (isset($_SESSION["user"])) {
                     Sign in to your account
                 </h1>
             </div>
-              <form class="log__form" action="../../controllers/UserController.php" method="post">
+              <form class="log__form" action="./login.php" method="POST">
                   <div class="inp__frm">
                       <label for="login_identifier">Email or username</label>
                       <input type="text" name="login_identifier" id="login_identifier" class="" placeholder="email or username" required="">

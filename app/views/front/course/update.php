@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
 use App\Controllers\TagController;
@@ -42,7 +43,7 @@ $categories = $categoryController->readAllCategories();
         <div class="art_pic">
           <img src="<?= $data["cover"] ?>" alt="" />
         </div>
-        <!-- <input type="hidden" name="author__id" value="<?= $_SESSION['user']['userId'] ?>"> -->
+        <input type="hidden" name="teacherId" value="<?= $_SESSION['user']['userId'] ?>">
         <div class="custom-file-input">
           <label for="courseCover" class="file-label">
             <button class="file-button" style="background-color: green;">New cover</button>

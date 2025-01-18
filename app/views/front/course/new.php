@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
 use App\Controllers\TagController;
@@ -30,12 +31,10 @@ $categories = $categoryController->readAllCategories();
 </head>
 
 <body>
-
   <main class="create__article">
-
     <div class="create__article-content">
       <form action="./new.php" method="post" class="article__form" enctype="multipart/form-data">
-        <!-- <input type="hidden" name="author__id" value="<?= $_SESSION['user']['userId'] ?>"> -->
+        <input type="hidden" name="teacherId" value="<?= $_SESSION['user']['userId'] ?>">
         <div class="custom-file-input">
           <label for="courseCover" class="file-label">
             <button class="file-button">Upload File</button>
