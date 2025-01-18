@@ -1,6 +1,6 @@
 <?php
-
 namespace App\Controllers;
+// session_start();
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -17,7 +17,7 @@ class CourseController
 
     public function createCourse()
     {
-        if ($_SERVER["REQUEST_METHOD"] === "POST" && !empty($_POST["courseTitle"])) {
+        if ($_SERVER["REQUEST_METHOD"] === "POST" && !empty($_POST["courseTitle"]) && $_SESSION["user"]["role"] === "teacher") {
             $title = $_POST["courseTitle"];
             $description = $_POST["courseDescription"];
             $userOption = $_POST["select__choix"];
@@ -25,6 +25,7 @@ class CourseController
             $textContent = $_POST["TextOptionContent"] ?? null;
             $tagsId = $_POST["courseSelectedTags"] ?? [];
             $categoryId = $_POST["category_id"];
+            $teacherId = $_POST["teacherId"];
 
             $cover = null;
             if (isset($_FILES["courseCover"]) && $_FILES['courseCover']['error'] === UPLOAD_ERR_OK) {
@@ -44,6 +45,7 @@ class CourseController
             $this->courseModel->setTags($tagsId);
             $this->courseModel->setVideo($video);
             $this->courseModel->setContent($textContent);
+            $this->courseModel->setTeacherId($teacherId);
 
             $result = $this->courseModel->createCourse($userOption === "text");
 
@@ -63,6 +65,8 @@ class CourseController
             $textContent = $_POST["new-TextOptionContent"] ?? null;
             $tagsId = $_POST["new-courseSelectedTags"] ?? [];
             $categoryId = $_POST["new-category_id"];
+            $teacherId = $_POST["teacherId"];
+
             $cover = $oldCover;
             if (isset($_FILES["new-courseCover"]) && $_FILES['new-courseCover']['error'] === UPLOAD_ERR_OK) {
                 $uploadFolder = "../../../../uploads/";
@@ -82,6 +86,7 @@ class CourseController
             $this->courseModel->setTags($tagsId);
             $this->courseModel->setVideo($video);
             $this->courseModel->setContent($textContent);
+            $this->courseModel->setTeacherId($teacherId);
 
             $result = $this->courseModel->updateCourse($id);
 
@@ -98,7 +103,6 @@ class CourseController
             echo "Invalid course ID.";
             return false;
         }
-
         $this->courseModel->setId($id);
         $result = $this->courseModel->readCourseById();
         if ($result) {
@@ -106,5 +110,33 @@ class CourseController
         } else {
             return false;
         }
+    }
+
+    public function readAllCourses($status)
+    {
+        $result = $this->courseModel->readAllCourses($status);
+        if ($result) {
+            return $result;
+        } else {
+            return false;
+        }
+    }
+
+    public function updateCourseStatus($id, $status) {
+            $this->courseModel->setId($id);
+            $chech = $this->courseModel->updateCourseStatus($status);
+            if ($chech) {
+                header("location: /app/views/admin/courses.php");
+            }
+    }
+
+    public function deleteCourse($id)
+    {
+            $this->courseModel->setId($id);
+            $chech = $this->courseModel->deleteCourse($id);
+            if ($chech) {
+                header("location: /app/views/admin/courses.php");
+            }
+
     }
 }
