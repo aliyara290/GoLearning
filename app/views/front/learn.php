@@ -1,19 +1,25 @@
 <?php
-require __DIR__ . "/../../controllers/UserController.php";
+session_start();
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
-use App\Controllers\UserController;
+use App\Controllers\CourseController;
 
-$userController = new UserController();
-$userController->register();
+$courseController = new CourseController();
+$id = $_GET["courseId"];
+$course = $courseController->readCourseById($id);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../../../assets/css/front/style.css" />
-    <title>Sign in</title>
+    <link rel="stylesheet" href="../../../assets/css/front/output.css" />
+    <script
+        src="https://kit.fontawesome.com/f01941449c.js"
+        crossorigin="anonymous"></script>
+    <title><?= $course["title"] ?></title>
 </head>
 
 <body>
@@ -106,64 +112,40 @@ $userController->register();
             </ul>
         </nav>
     </header>
-    <section class="form__section">
-        <div class="form__content">
-            <div class="section__heading">
-                <h1>
-                    Sign up
-                </h1>
+    <main class="leaning_main-page">
+        <div class="learning__page">
+            <div class="course__detailes-lr">
+                <div class="courseTeacher">
+                    <div class="teacher__picture-c">
+                        <?php
+                        if (isset($course["picture"])): ?>
+                            <img src="<?= $course["picture"] ?> " alt="">
+                        <?php else: ?>
+                            <span><?= substr($course["firstName"], 0, 1) . substr($course["lastName"], 0, 1) ?></span>
+                        <?php endif ?>
+                    </div>
+                    <div class="teacher__name-c">
+                        <span>
+                            <p><?= $course["firstName"] . " " . $course["lastName"] ?></p>
+                        </span>
+                    </div>
+                </div>
+                <div class="course__title-lr">
+                    <h3><?= $course["title"] ?></h3>
+                </div>
             </div>
-            <form class="log__form" action="./register.php" method="post">
-                <div class="reg__row">
-                    <div class="inp__frm">
-                        <label for="u_firstName">First name</label>
-                        <input type="text" name="u_firstName" id="u_firstName" placeholder="First Name" required="">
-                    </div>
-                    <div class="inp__frm">
-                        <label for="u_lastName">Last name</label>
-                        <input type="text" name="u_lastName" id="u_lastName" placeholder="email" required="">
-                    </div>
+            <?php 
+            if(isset($course["video"])):?>
+            <div class="course__video">
+                <iframe src="<?= $course["video"] ?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <?php else: ?>
+                <div class="course__description-lr">
+                    <p><?= $course["content"] ?></p>
                 </div>
-                <div class="roleOptions_st">
-                    <div class="inp__frm">
-                        <label>Select Your Role</label>
-                        <select name="u_role" id="u_role">
-                            <option selected disabled>Select option</option>
-                            <option value="teacher">Register as teacher</option>
-                            <option value="student">Register as student</option>
-                        </select>
-                    </div>
-
-                </div>
-                <div class="inp__frm">
-                    <label for="u_email">Email</label>
-                    <input type="email" name="u_email" id="u_email" placeholder="email" required="">
-                </div>
-                <div class="inp__frm">
-                    <label for="u_username">Username</label>
-                    <input type="text" name="u_username" id="u_username" placeholder="username" required="">
-                </div>
-                <div class="inp__frm">
-                    <label for="u_password" class="">Password</label>
-                    <input type="password" name="u_password" id="u_password" placeholder="password" class="" required="">
-                </div>
-                <!-- <div class="inp__frm">
-                <label for="signup_confirm_password" class="">Confirm password</label>
-                <input type="password" name="signup_confirm_password" id="signup_confirm_password" placeholder="confirm password" class="" required="">
-            </div> -->
-                <div class="sit__prg">
-                    <p>
-                        Already have an account? <a href="./login.php" class="">Log in</a>
-                    </p>
-                </div>
-                <div class="submit__btn">
-                    <button type="submit" name="register" class="">Sign up</button>
-                </div>
-
-            </form>
+            <?php endif?>
         </div>
-    </section>
-
+    </main>
     <script src="../../../assets/js/main.js"></script>
 </body>
 

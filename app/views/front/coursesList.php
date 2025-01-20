@@ -5,8 +5,11 @@ require_once __DIR__ . '/../../../vendor/autoload.php';
 use App\Controllers\CourseController;
 
 $courseController = new CourseController();
-$courses = $courseController->readAllCourses("active");
+$limit = 6;
+$page = isset($_GET["page"]) ? $_GET["page"] : 1;
+$courses = $courseController->readAllCourses("active", $page, $limit);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,33 +30,7 @@ $courses = $courseController->readAllCourses("active");
             <div class="logo">
                 <a href="./index.php">
                     <h1><span>Go</span>Learning</h1>
-
                 </a>
-            </div>
-            <div class="search__for">
-                <div class="search__bar">
-                    <input type="text" id="searchQuery" placeholder="Search for courses..." onkeyup="liveSearch()" />
-                </div>
-                <!-- <div class="search__result" id="searchResults">
-          <?php
-            if (!empty($searchResult)) {
-                foreach ($searchResult as $result) {
-            ?>
-              <div class="course__cont">
-                <a href="./course.php?action=read&slug=<?= $result["slug"] ?>" class="course__result">
-                  <div class="art__title-r">
-                    <h4><?= htmlspecialchars($result["title"]) ?></h4>
-                  </div>
-                  <div class="art__date-r">
-                    <span><?= date('Y-m-d', strtotime($result["createdAt"])) ?></span>
-                  </div>
-                </a>
-              </div>
-          <?php
-                }
-            }
-            ?>
-        </div> -->
             </div>
         </div>
         </div>
@@ -96,15 +73,16 @@ $courses = $courseController->readAllCourses("active");
                                         <span><i class="fa-solid fa-gear"></i></span>
                                         <span>Setting</span>
                                     </a></li>
-                                <li class="menu_item"><a href="./createcourse/new.php">
-                                        <span><i class="fa-solid fa-newspaper"></i></span>
-                                        <span>Create post</span>
-
-                                    </a></li>
-                                <li class="menu_item"><a href="./statistic/statistic.php">
-                                        <span><i class="fa-solid fa-chart-simple"></i></span>
-                                        <span>Statistic</span>
-                                    </a></li>
+                                <?php if ($_SESSION["user"]["role"] === "teacher"): ?>
+                                    <li class="menu_item"><a href="./createcourse/new.php">
+                                            <span><i class="fa-solid fa-newspaper"></i></span>
+                                            <span>Create post</span>
+                                        </a></li>
+                                    <li class="menu_item"><a href="./statistic/statistic.php">
+                                            <span><i class="fa-solid fa-chart-simple"></i></span>
+                                            <span>Statistic</span>
+                                        </a></li>
+                                <?php endif ?>
                                 <div class="acc__line"></div>
                                 <li class="menu_item">
                                     <a href="../../controllers/Logout.php">
@@ -136,7 +114,6 @@ $courses = $courseController->readAllCourses("active");
             </ul>
         </nav>
     </header>
-
 
     <div class="blog__content">
         <aside class="left__side">
@@ -215,13 +192,14 @@ $courses = $courseController->readAllCourses("active");
             <div class="c-heading">
                 <h2>Our popular courses</h2>
             </div>
+
             <ul class="articles__list">
                 <?php
-                if (!empty($courses)) : ?>
+                if ($courses["totalRecords"] > 0) : ?>
                     <?php
-                    foreach ($courses as $course): ?>
+                    foreach ($courses["records"] as $course): ?>
                         <li class="pending__course">
-                            <a href="../front/course.php?slug=">
+                            <a href="../front/course.php?id=<?= $course["id"] ?>">
                                 <div class="course__cover">
                                     <img src="<?= $course["cover"] ?>" alt="">
                                 </div>
@@ -255,33 +233,30 @@ $courses = $courseController->readAllCourses("active");
                     </div>
                 <?php endif ?>
             </ul>
-            <div class="flex items-center justify-center pb-10">
+            <div class="pagination-container">
                 <nav>
-                    <ul class="inline-flex -space-x-px text-base h-10">
-                        <li>
-                            <a href="#" class="text-4xl flex items-center justify-center px-6 py-3 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 ">Previous</a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-4xl flex items-center justify-center px-6 py-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">1</a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-4xl flex items-center justify-center px-6 py-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">2</a>
-                        </li>
-                        <li>
-                            <a href="#" aria-current="page" class="text-4xl flex items-center justify-center px-6 py-3 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-4xl flex items-center justify-center px-6 py-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">4</a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-4xl flex items-center justify-center px-6 py-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">5</a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-4xl flex items-center justify-center px-6 py-3 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 ">Next</a>
-                        </li>
+                    <ul class="pagination-list">
+                        <?php if ($courses['currentPage'] > 1): ?>
+                            <li>
+                                <a href="?page=<?= $courses['currentPage'] - 1 ?>" class="pagination-link pagination-prev">Prev</a>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php for ($i = 1; $i <= $courses['totalPages']; $i++): ?>
+                            <li>
+                                <a href="?page=<?= $i ?>" class="pagination-link <?= $i == $courses['currentPage'] ? 'active' : '' ?>">
+                                    <?= $i ?>
+                                </a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <?php if ($courses['currentPage'] < $courses['totalPages']): ?>
+                            <li>
+                                <a href="?page=<?= $courses['currentPage'] + 1 ?>" class="pagination-link pagination-next">Next</a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
                 </nav>
-
             </div>
             <footer class="footer">
                 <div class="footer-container">

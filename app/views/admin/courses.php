@@ -1,12 +1,14 @@
 <?php
+session_start();
 require_once __DIR__ . '/../../../vendor/autoload.php';
-
 use App\Controllers\CourseController;
 
 $courseController = new CourseController();
 
-$courses = $courseController->readAllCourses("pending");
-$draftCourses = $courseController->readAllCourses("draft");
+$limit = 6;
+$page = isset($_GET["page"]) ? $_GET["page"] : 1;
+$courses = $courseController->readAllCourses("pending", $page, $limit);
+$draftCourses = $courseController->readAllCourses("draft", $page, $limit);
 
 if (isset($_GET["action"], $_GET["courseId"])) {
     $action = $_GET["action"];
@@ -18,7 +20,10 @@ if (isset($_GET["action"], $_GET["courseId"])) {
         } elseif ($action === "draftCourse") {
             $courseController->updateCourseStatus($courseId, "draft");
         } elseif ($action === "deleteCourse") {
-            $courseController->deleteCourse($courseId);
+            $check = $courseController->deleteCourse($courseId);
+            if ($chech) {
+                header("location: /app/views/admin/courses.php");
+            }
         }
     }
 }
@@ -105,9 +110,9 @@ if (isset($_GET["action"], $_GET["courseId"])) {
                 <div class="pend__articles-content">
                     <ul class="pend__articles-list">
                         <?php
-                        if (!empty($courses)) : ?>
+                        if (!empty($courses["records"])) : ?>
                             <?php
-                            foreach ($courses as $course): ?>
+                            foreach ($courses["records"] as $course): ?>
                                 <li class="pending__course">
                                     <div class="course__cover">
                                         <img src="<?= $course["cover"] ?>" alt="">
@@ -143,7 +148,7 @@ if (isset($_GET["action"], $_GET["courseId"])) {
                                         </div>
                                         <div class="draft_art pend_btn">
                                             <a href="./courses.php?action=draftCourse&courseId=<?= $course["id"] ?>">
-                                            <i class="fa-solid fa-box-archive"></i>
+                                                <i class="fa-solid fa-box-archive"></i>
                                             </a>
                                         </div>
                                         <div class="refuse_art pend_btn">
@@ -161,6 +166,33 @@ if (isset($_GET["action"], $_GET["courseId"])) {
                         <?php endif ?>
                     </ul>
                 </div>
+
+                <div class="pagination-container">
+                    <nav>
+                        <ul class="pagination-list">
+                            <?php if ($courses['currentPage'] > 1): ?>
+                                <li>
+                                    <a href="?page=<?= $courses['currentPage'] - 1 ?>" class="pagination-link pagination-prev">Prev</a>
+                                </li>
+                            <?php endif; ?>
+
+                            <?php for ($i = 1; $i <= $courses['totalPages']; $i++): ?>
+                                <li>
+                                    <a href="?page=<?= $i ?>" class="pagination-link <?= $i == $courses['currentPage'] ? 'active' : '' ?>">
+                                        <?= $i ?>
+                                    </a>
+                                </li>
+                            <?php endfor; ?>
+
+                            <?php if ($courses['currentPage'] < $courses['totalPages']): ?>
+                                <li>
+                                    <a href="?page=<?= $courses['currentPage'] + 1 ?>" class="pagination-link pagination-next">Next</a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                    </nav>
+                </div>
+
             </div>
             <div class="pending__articles">
                 <div class="heading">
@@ -170,9 +202,9 @@ if (isset($_GET["action"], $_GET["courseId"])) {
                 <div class="pend__articles-content">
                     <ul class="pend__articles-list">
                         <?php
-                        if (!empty($draftCourses)) : ?>
+                        if (!empty($draftCourses["records"])) : ?>
                             <?php
-                            foreach ($draftCourses as $course): ?>
+                            foreach ($draftCourses["records"] as $course): ?>
                                 <li class="pending__course">
                                     <div class="course__cover">
                                         <img src="<?= $course["cover"] ?>" alt="">
@@ -220,6 +252,32 @@ if (isset($_GET["action"], $_GET["courseId"])) {
                             </div>
                         <?php endif ?>
                     </ul>
+                </div>
+
+                <div class="pagination-container">
+                    <nav>
+                        <ul class="pagination-list">
+                            <?php if ($draftCourses['currentPage'] > 1): ?>
+                                <li>
+                                    <a href="?page=<?= $draftCourses['currentPage'] - 1 ?>" class="pagination-link pagination-prev">Prev</a>
+                                </li>
+                            <?php endif; ?>
+
+                            <?php for ($i = 1; $i <= $draftCourses['totalPages']; $i++): ?>
+                                <li>
+                                    <a href="?page=<?= $i ?>" class="pagination-link <?= $i == $draftCourses['currentPage'] ? 'active' : '' ?>">
+                                        <?= $i ?>
+                                    </a>
+                                </li>
+                            <?php endfor; ?>
+
+                            <?php if ($draftCourses['currentPage'] < $draftCourses['totalPages']): ?>
+                                <li>
+                                    <a href="?page=<?= $draftCourses['currentPage'] + 1 ?>" class="pagination-link pagination-next">Next</a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </main>

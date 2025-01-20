@@ -1,6 +1,6 @@
 <?php
+session_start();
 require_once __DIR__ . '/../../../vendor/autoload.php';
-
 use App\Controllers\UserController;
 
 $userController = new UserController();
@@ -87,6 +87,7 @@ $userController->deleteUser();
           <table class="user-table">
             <thead class="table-head">
               <tr>
+                <th class="table-header">Id</th>
                 <th class="table-header">Full name</th>
                 <th class="table-header">Email</th>
                 <th class="table-header">Username</th>
@@ -103,6 +104,7 @@ $userController->deleteUser();
                 <?php
                 if ($user["status"] == "active"): ?>
                   <tr class="table-row">
+                    <td class="table-data"><?= $user["id"] ?></td>
                     <td class="table-data"><?= $user["firstName"] . " " . $user["lastName"] ?></td>
                     <td class="table-data"><?= $user["email"] ?></td>
                     <td class="table-data"><?= $user["username"] ?></td>
@@ -145,7 +147,7 @@ $userController->deleteUser();
         foreach ($users as $user) {
           if ($user["role"] === "teacher" && $user["status"] === "pending") {
             $hasPendingTeachers = true;
-            break; 
+            break;
           }
         }
         ?>
@@ -154,6 +156,7 @@ $userController->deleteUser();
             <table class="user-table">
               <thead class="table-head">
                 <tr>
+                  <th class="table-header">Id</th>
                   <th class="table-header">Full name</th>
                   <th class="table-header">Email</th>
                   <th class="table-header">Username</th>
@@ -170,6 +173,7 @@ $userController->deleteUser();
                   <?php
                   if ($user["role"] == "teacher" && $user["status"] == "pending"): ?>
                     <tr class="table-row">
+                    <td class="table-data"><?= $user["id"] ?></td>
                       <td class="table-data"><?= $user["firstName"] . " " . $user["lastName"] ?></td>
                       <td class="table-data"><?= $user["email"] ?></td>
                       <td class="table-data"><?= $user["username"] ?></td>
@@ -215,7 +219,7 @@ $userController->deleteUser();
         foreach ($users as $user) {
           if ($user["status"] === "suspended") {
             $hasSuspendedUsers = true;
-            break; 
+            break;
           }
         }
         ?>
@@ -224,6 +228,7 @@ $userController->deleteUser();
             <table class="user-table">
               <thead class="table-head">
                 <tr>
+                  <th class="table-header">Id</th>
                   <th class="table-header">Full name</th>
                   <th class="table-header">Email</th>
                   <th class="table-header">Username</th>
@@ -240,6 +245,7 @@ $userController->deleteUser();
                   <?php
                   if ($user["status"] == "suspended"): ?>
                     <tr class="table-row">
+                    <td class="table-data"><?= $user["id"] ?></td>
                       <td class="table-data"><?= $user["firstName"] . " " . $user["lastName"] ?></td>
                       <td class="table-data"><?= $user["email"] ?></td>
                       <td class="table-data"><?= $user["username"] ?></td>
