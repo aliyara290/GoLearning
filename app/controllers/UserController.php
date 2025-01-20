@@ -23,12 +23,24 @@ class UserController
         $roleOption = $role;
         switch ($roleOption) {
             case "teacher":
-                // echo "yeeeeeeeeeeeees i'm teacher";
-                return new Teacher($firstName, $lastName, $email, $username, $password);
+                $teacher = new Teacher();
+                $teacher->setFirstName($firstName);
+                $teacher->setLastName($lastName);
+                $teacher->setEmail($email);
+                $teacher->setUsername($username);
+                $teacher->setPassword($password);
+                $teacher->setRole($role);
+                return $teacher->register();
                 break;
             case "student":
-                // echo "yeeeeeeeeeeeees i'm student";
-                return new Student($firstName, $lastName, $email, $username, $password);
+                $student = new Student();
+                $student->setFirstName($firstName);
+                $student->setLastName($lastName);
+                $student->setEmail($email);
+                $student->setUsername($username);
+                $student->setPassword($password);
+                $student->setRole($role);
+                return $student->register();
                 break;
         }
     }
@@ -134,4 +146,5 @@ class UserController
             }
         }
     }
+
 }
