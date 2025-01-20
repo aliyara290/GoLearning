@@ -115,7 +115,7 @@ class Course
     public function updateCourse(int $id)
     {
         // $contentColumn = $this->content !== null ? "content = :content" : "video = :video";
-    
+
         $sql = "UPDATE $this->table 
                 SET 
                     title = :title, 
@@ -127,7 +127,7 @@ class Course
                     category_id = :category_id, 
                     teacher_id = :teacher_id 
                 WHERE id = :id";
-    
+
         $data = [
             ":title" => $this->title,
             ":slug" => strtolower(preg_replace('/[^\p{L}\p{N}]/u', '-', $this->title)),
@@ -140,25 +140,26 @@ class Course
             ":teacher_id" => $this->teacherId,
             ":id" => $id,
         ];
-    
+
         try {
             $stmt = $this->pdo->prepare($sql);
             $result = $stmt->execute($data);
-    
-            $this->removeTagsFromArticle($id); 
+
+            $this->removeTagsFromArticle($id);
             foreach ($this->tags as $tagId) {
                 $this->addTagsToCourse($id, $tagId);
             }
-    
+
             return $result;
         } catch (PDOException $error) {
             echo "Failed to update course: " . $error->getMessage();
             return false;
         }
     }
-    
 
-    public function readAllCourses($status) {
+
+    public function readAllCourses($status, $limit, $offset)
+    {
         $sql = "SELECT 
         c.*,  
         u.firstName, 
@@ -166,20 +167,20 @@ class Course
         u.picture,
         cat.name AS category_name, 
         GROUP_CONCAT(t.name SEPARATOR ', ') AS tags
-      FROM courses c
-      JOIN users u ON c.teacher_id = u.id
-      LEFT JOIN categories cat ON c.category_id = cat.id
-      LEFT JOIN course_tags ct ON c.id = ct.course_id
-      LEFT JOIN tags t ON ct.tag_id = t.id
-      WHERE c.status = :status
-      GROUP BY c.id, u.firstName, u.lastName, cat.name
-      ORDER BY c.created_at DESC
-      LIMIT 0,6;";
+        FROM courses c
+        JOIN users u ON c.teacher_id = u.id
+        LEFT JOIN categories cat ON c.category_id = cat.id
+        LEFT JOIN course_tags ct ON c.id = ct.course_id
+        LEFT JOIN tags t ON ct.tag_id = t.id
+        WHERE c.status = :status
+        GROUP BY c.id, u.firstName, u.lastName, cat.name
+        ORDER BY c.created_at DESC
+        LIMIT $limit OFFSET $offset;";
 
         $data = [
             ":status" => $status
         ];
-    
+
         try {
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($data);
@@ -189,15 +190,28 @@ class Course
             return false;
         }
     }
-    public function readCourseById() {
+
+
+    public function countAllCourses($status)
+    {
+        $query = "SELECT COUNT(*) as total FROM courses WHERE status = :status";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([":status" => $status]);
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+
+    public function readCourseById()
+    {
         if (empty($this->id)) {
             echo ("Course ID is not set.");
         }
-    
+
         $sql = "SELECT 
         c.*,  
         u.firstName, 
         u.lastName, 
+        u.joined,
+        u.picture,
         cat.name AS category_name, 
         GROUP_CONCAT(t.name SEPARATOR ', ') AS tags
       FROM courses c
@@ -212,7 +226,7 @@ class Course
         $data = [
             ":id" => $this->id
         ];
-    
+
         try {
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($data);
@@ -229,7 +243,7 @@ class Course
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':course_id' => $id]);
     }
-    
+
     private function addTagsToCourse(int $courseId, int $tagId)
     {
         $sql = "INSERT INTO course_tags (course_id, tag_id) VALUES (:course_id, :tag_id)";
@@ -245,7 +259,8 @@ class Course
         }
     }
 
-    public function updateCourseStatus($status) {
+    public function updateCourseStatus($status)
+    {
         $sql = "UPDATE courses SET status = :status WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
         $check = $stmt->execute([
