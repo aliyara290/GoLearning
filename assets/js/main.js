@@ -10,7 +10,9 @@ const menuDots = document.querySelectorAll(".dots_port");
 const menuList = document.querySelectorAll(".mn_btns");
 
 menuDots.forEach((dot, index) => {
-  dot.addEventListener("click", () => {
+  dot.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     menuList[index].classList.toggle("active");
   });
 });
