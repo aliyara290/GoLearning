@@ -1,6 +1,6 @@
 <?php
+
 namespace App\Controllers;
-// session_start();
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -50,13 +50,14 @@ class CourseController
             $result = $this->courseModel->createCourse($userOption === "text");
 
             if ($result) {
-                header("location: /app/views/front/");
+                header("location: /app/views/front/coursesList.php");
             }
         }
     }
 
 
-    public function updateCourse($id,$oldCover) {
+    public function updateCourse($id, $oldCover)
+    {
         if ($_SERVER["REQUEST_METHOD"] === "POST" && !empty($_POST["new-courseTitle"])) {
             $title = $_POST["new-courseTitle"];
             $description = $_POST["new-courseDescription"];
@@ -112,31 +113,35 @@ class CourseController
         }
     }
 
-    public function readAllCourses($status)
+    public function readAllCourses($status, $page, $limit)
     {
-        $result = $this->courseModel->readAllCourses($status);
-        if ($result) {
-            return $result;
-        } else {
-            return false;
-        }
+        $page = max((int)$page, 1);
+        $offset = ($page - 1) * $limit;
+        $records = $this->courseModel->readAllCourses($status, $limit, $offset);
+        $totalRecords = $this->courseModel->countAllCourses($status);
+        $totalPages = ceil($totalRecords / $limit);
+
+        return [
+            "records" => $records,
+            'totalRecords' => $totalRecords,
+            'currentPage' => $page,
+            'totalPages' => $totalPages
+        ];
     }
 
-    public function updateCourseStatus($id, $status) {
-            $this->courseModel->setId($id);
-            $chech = $this->courseModel->updateCourseStatus($status);
-            if ($chech) {
-                header("location: /app/views/admin/courses.php");
-            }
+    public function updateCourseStatus($id, $status)
+    {
+        $this->courseModel->setId($id);
+        $chech = $this->courseModel->updateCourseStatus($status);
+        if ($chech) {
+            header("location: /app/views/admin/courses.php");
+        }
     }
 
     public function deleteCourse($id)
     {
-            $this->courseModel->setId($id);
-            $chech = $this->courseModel->deleteCourse($id);
-            if ($chech) {
-                header("location: /app/views/admin/courses.php");
-            }
-
+        $this->courseModel->setId($id);
+        $this->courseModel->deleteCourse($id);
+       
     }
 }
