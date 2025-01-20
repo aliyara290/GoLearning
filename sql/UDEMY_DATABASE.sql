@@ -17,6 +17,9 @@ CREATE TABLE users (
     bio TEXT
 );
 
+ALTER TABLE users ADD COLUMN website VARCHAR(100);
+
+
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,
