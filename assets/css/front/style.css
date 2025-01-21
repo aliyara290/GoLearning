@@ -10,8 +10,6 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
-
-
 html {
   font-size: 10px;
   scroll-behavior: smooth;
@@ -185,60 +183,21 @@ select option:hover {
   font-weight: 600;
   color: var(--blue);
 }
-.search__for {
-  width: 100%;
-  position: relative;
-}
+
 .search__bar {
   width: 100%;
   background-color: var(--white);
   height: 4.5rem;
   border-radius: 5px;
+  overflow: hidden;
 }
-.search__bar:focus .search__result {
-  display: flex;
-  background-color: red;
-}
-.search__result {
-  position: absolute;
-  top: 120%;
-  width: 100%;
-  max-height: 20rem;
-  height: max-content;
-  background-color: var(--white);
-  border-radius: 5px;
-  box-shadow: 0 0 12px 3px #00000011;
-  border: 1.2px solid #c1bfbf;
-  /* padding: 0.7rem; */
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-  overflow: auto;
-}
-.article__result {
-  /* box-sizing: border-box; */
-  /* width: 100%; */
-  margin: 1rem;
-  padding: 1rem;
-  border-radius: 5px;
-  background-color: var(--light);
-  box-shadow: 0 0 12px 3px #0000000b;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  border: 1.2px solid #c1bfbf;
-}
-.article__result:hover {
-  background-color: #d7e2f5;
-}
-.article__result span {
-  font-size: 1.2rem;
-}
-.article__result h4 {
-  font-size: 1.4rem;
+.search__form-ds {
+  height: 100%;
+display: flex;
+justify-content: space-between;
 }
 .search__bar input {
-  width: 100%;
+  width: 85%;
   height: 100%;
   border: none;
   outline: none;
@@ -246,6 +205,16 @@ select option:hover {
   padding: 0 2rem;
   border-radius: 5px;
   font-size: 1.3rem;
+}
+.search__form-ds button {
+background-color: var(--blue);
+width: 15%;
+height: 100%;
+color: var(--light);
+font-size: 1.8rem;
+}
+.search__form-ds button:hover {
+  background-color: var(--dark-blue);
 }
 /* .search__bar input:focus {
   border: 1.6px solid var(--blue);
@@ -1841,4 +1810,13 @@ padding-bottom: 3rem;
   padding: 2rem;
   font-size: 1.8rem;
   border-top: 2px solid #6d7ada56;
+}
+/* myCourses page */
+.mycourses__content {
+  width: 70%;
+  margin: 0 auto;
+  padding-top: 10rem;
+}
+.no__articles-pend p {
+  font-size: 1.6rem;
 }
