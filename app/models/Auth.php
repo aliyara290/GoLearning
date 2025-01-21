@@ -6,7 +6,7 @@ use PDOException;
 
 class Auth extends User  {
     public function login($identifier, $password) {
-        $sql = "SELECT * FROM users WHERE email = :email OR username = :username";
+        $sql = "SELECT * FROM users WHERE (email = :email OR username = :username) AND status = 'active'";
         $data = [
             ":email" => $identifier,
             ":username" => $identifier
