@@ -21,12 +21,11 @@ class Course
     private string $categoryId;
     private array $tags = [];
     private int $teacherId;
-
+    
     public function __construct()
     {
         $this->pdo = Database::getInstance();
     }
-
     public function setId(int $id): void
     {
         $this->id = $id;
@@ -35,42 +34,34 @@ class Course
     {
         $this->title = $title;
     }
-
     public function setContent(string $content): void
     {
         $this->content = $content;
     }
-
     public function setVideo(string $video): void
     {
         $this->video = $video;
     }
-
     public function setDescription(string $description): void
     {
         $this->description = $description;
     }
-
     public function setCover(string $cover): void
     {
         $this->cover = $cover;
     }
-
     public function setCategoryId(string $categoryId): void
     {
         $this->categoryId = $categoryId;
     }
-
     public function setTags(array $tags): void
     {
         $this->tags = $tags;
     }
-
     public function setTeacherId(int $teacherId): void
     {
         $this->teacherId = $teacherId;
     }
-
     public function __call($method, $arguments)
     {
         if ($method === 'createCourse') {
@@ -78,7 +69,6 @@ class Course
             return $this->createCourse($isTextContent);
         }
     }
-
     private function createCourse(bool $isTextContent = true)
     {
         $columns = "title, slug, description, " . ($isTextContent ? "content" : "video") . ", cover, category_id, teacher_id";
@@ -111,7 +101,6 @@ class Course
         }
         return $courseId;
     }
-
     public function updateCourse(int $id)
     {
         // $contentColumn = $this->content !== null ? "content = :content" : "video = :video";
@@ -156,8 +145,13 @@ class Course
             return false;
         }
     }
-
-
+    public function deleteCourse()
+    {
+        $sql = "DELETE FROM courses WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $check = $stmt->execute([':id' => $this->id]);
+        return $check;
+    }
     public function readAllCourses($status, $limit, $offset)
     {
         $sql = "SELECT 
@@ -190,8 +184,6 @@ class Course
             return false;
         }
     }
-
-
     public function countAllCourses($status)
     {
         $query = "SELECT COUNT(*) as total FROM courses WHERE status = :status";
@@ -199,7 +191,6 @@ class Course
         $stmt->execute([":status" => $status]);
         return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
-
     public function readCourseById()
     {
         if (empty($this->id)) {
@@ -236,14 +227,12 @@ class Course
             return false;
         }
     }
-
     private function removeTagsFromArticle($id)
     {
         $sql = "DELETE FROM course_tags WHERE course_id = :course_id";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':course_id' => $id]);
     }
-
     private function addTagsToCourse(int $courseId, int $tagId)
     {
         $sql = "INSERT INTO course_tags (course_id, tag_id) VALUES (:course_id, :tag_id)";
@@ -258,7 +247,6 @@ class Course
             echo "Failed to insert data into course_tags table: " . $error->getMessage();
         }
     }
-
     public function updateCourseStatus($status)
     {
         $sql = "UPDATE courses SET status = :status WHERE id = :id";
@@ -269,12 +257,28 @@ class Course
         ]);
         return $check;
     }
-
-    public function deleteCourse()
-    {
-        $sql = "DELETE FROM courses WHERE id = :id";
-        $stmt = $this->pdo->prepare($sql);
-        $check = $stmt->execute([':id' => $this->id]);
-        return $check;
+    public function searchForCourse(string $title) {
+        $sql = "SELECT 
+        c.*,  
+        u.firstName, 
+        u.lastName,
+        u.picture,
+        cat.name AS category_name, 
+        GROUP_CONCAT(t.name SEPARATOR ', ') AS tags
+        FROM courses c
+        JOIN users u ON c.teacher_id = u.id
+        LEFT JOIN categories cat ON c.category_id = cat.id
+        LEFT JOIN course_tags ct ON c.id = ct.course_id
+        LEFT JOIN tags t ON ct.tag_id = t.id
+        WHERE c.status = 'active' AND title LIKE :title
+        GROUP BY c.id, u.firstName, u.lastName, cat.name
+        ORDER BY c.created_at DESC;";
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([":title" => "%$title%"]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $error) {
+            echo "Failed to fetch data: " . $error->getMessage();
+        }
     }
 }
