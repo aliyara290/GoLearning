@@ -141,7 +141,13 @@ class CourseController
     public function deleteCourse($id)
     {
         $this->courseModel->setId($id);
-        $this->courseModel->deleteCourse($id);
-       
+        return $this->courseModel->deleteCourse($id);
+    }
+
+    public function searchForCourse() {
+        if($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["search"])) {
+            $searchInput = htmlspecialchars($_GET["search"]);
+            return $this->courseModel->searchForCourse($searchInput);
+        } else echo "failed";
     }
 }
