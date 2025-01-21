@@ -1,7 +1,10 @@
-<?php 
-session_start();
+<?php
 require_once __DIR__ . '/../../../vendor/autoload.php';
+
 use App\Controllers\CategoryController;
+use App\Middleware\RoleMiddleware;
+RoleMiddleware::handle(['admin']);
+
 $categoryController = new CategoryController();
 $categories = $categoryController->readAllCategories();
 ?>
@@ -68,8 +71,9 @@ $categories = $categoryController->readAllCategories();
             <span><i class="fa-solid fa-house"></i></span>
           </a>
           <a href="../../controllers/Logout.php">
-            <span>
+            <span style="display: flex; gap: 1rem; align-items: center;">
               <i class="fa-solid fa-right-from-bracket"></i>
+              <p style="font-size: 1.4rem;">Disconnected</p>
             </span>
           </a>
         </nav>
@@ -92,37 +96,37 @@ $categories = $categoryController->readAllCategories();
         </div>
       </div>
       <section class="cls__section">
-      <div class="heading">
-            <h1>Categories list (<?= count($categories) ?>)</h1>
-          </div>
-          <ul class="cls__list">
-            <?php 
-            if(isset($categories)):?>
-            <?php 
-            foreach($categories as $category): ?>
-            <li class="cls__card">
-              <div class="cls__name">
-                <span><?= $category["name"]?></span>
-              </div>
-              <div class="cls__management">
-                <span>
-                  <a href="./updateCategory.php?action=updateCategory&categoryId=<?= $category["id"] ?>">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                  </a>
-                </span>
-                <span>
-                  <a href="./categories.php?action=deleteCategory&categoryId=<?= $category["id"] ?>">
-                    <i class="fa-solid fa-trash-can"></i>
-                  </a>
-                </span>
-              </div>
-            </li>
+        <div class="heading">
+          <h1>Categories list (<?= count($categories) ?>)</h1>
+        </div>
+        <ul class="cls__list">
+          <?php
+          if (isset($categories)): ?>
+            <?php
+            foreach ($categories as $category): ?>
+              <li class="cls__card">
+                <div class="cls__name">
+                  <span><?= $category["name"] ?></span>
+                </div>
+                <div class="cls__management">
+                  <span>
+                    <a href="./updateCategory.php?action=updateCategory&categoryId=<?= $category["id"] ?>">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+                  </span>
+                  <span>
+                    <a href="./categories.php?action=deleteCategory&categoryId=<?= $category["id"] ?>">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </a>
+                  </span>
+                </div>
+              </li>
             <?php endforeach ?>
-            <?php 
-            else: ?>
+          <?php
+          else: ?>
             <p>No tags to show!</p>
-            <?php endif ?>
-          </ul>
+          <?php endif ?>
+        </ul>
       </section>
     </main>
   </div>

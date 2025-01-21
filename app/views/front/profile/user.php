@@ -1,10 +1,12 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
 use App\Controllers\UserProfileController;
 use App\Controllers\TeacherController;
 use App\Controllers\CourseController;
+use App\Middleware\RoleMiddleware;
+
+RoleMiddleware::handle(['teacher', 'admin', 'student']);
 
 $userProfileController = new UserProfileController();
 $portfolio = $userProfileController->displayUserPortfolio();
@@ -15,12 +17,12 @@ if (isset($_GET["action"], $_GET["courseId"])) {
   $action = $_GET["action"];
   $courseId = $_GET["courseId"];
   if ($courseId) {
-      if ($action === "deleteCourse") {
-        $check = $courseController->deleteCourse($courseId);
-        if ($check) {
-          header("location: /app/views/front/profile/user.php");
+    if ($action === "deleteCourse") {
+      $check = $courseController->deleteCourse($courseId);
+      if ($check) {
+        header("location: /app/views/front/profile/user.php");
       }
-      }
+    }
   }
 }
 if (!isset($_SESSION["user"])) {
@@ -64,9 +66,9 @@ if (!isset($_SESSION["user"])) {
           <?php endif ?>
           <li class="page_link">
             <div class="user_picture user__pic-nav">
-              <div class="u__pic">
+            <div class="u__pic">
                 <?php
-                if (isset($_SESSION["user"]["userPic"])): ?>
+                if (isset($_SESSION["user"]["picture"])): ?>
                   <img src="../<?= $_SESSION["user"]["picture"] ?>" alt="<?= $_SESSION["user"]["fullName"] ?>">
                 <?php
                 else:
@@ -91,15 +93,26 @@ if (!isset($_SESSION["user"])) {
                     <span><i class="fa-solid fa-gear"></i></span>
                     <span>Setting</span>
                   </a></li>
+                <?php
+                if ($_SESSION["user"]["role"] === "student"): ?>
+                  <li class="menu_item"><a href="../myCourses/">
+                      <span><i class="fa-solid fa-book"></i></span>
+                      <span>My Courses</span>
+                    </a>
+                  </li>
+                <?php
+                endif;
+                ?>
                 <?php if ($_SESSION["user"]["role"] === "teacher"): ?>
-                  <li class="menu_item"><a href="../createcourse/new.php">
+                  <li class="menu_item"><a href="../course/new.php">
                       <span><i class="fa-solid fa-newspaper"></i></span>
-                      <span>Create post</span>
+                      <span>Create course</span>
                     </a></li>
                   <li class="menu_item"><a href="../statistic/statistic.php">
                       <span><i class="fa-solid fa-chart-simple"></i></span>
                       <span>Statistic</span>
                     </a></li>
+
                 <?php endif ?>
                 <div class="acc__line"></div>
                 <li class="menu_item">
@@ -204,106 +217,101 @@ if (!isset($_SESSION["user"])) {
           </div>
         </div>
       </header>
-
-      <div class="prof__user-post">
-        <div class="prof__statistic">
-          <div class="prof__statistic-content">
-            <ul class="prof__statistic-list">
-              <li>
-                <span><i class="fa-solid fa-signs-post"></i></span>
-                <span><?= count($courses) ?> course <?= $_SESSION["user"]["role"] === "teacher" ? "published" : "enrolled" ?> </span>
-              </li>
-              <div class="acc__line"></div>
-              <li>
-                <span><i class="fa-solid fa-eye"></i></span>
-                <span>Total post views</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="prof__user-artcs">
-          <div class="user__artcs-content">
-            <ul class="user__artcs-list">
-              <?php
-              foreach ($courses as $course): ?>
-                <li class="user__artcs-item">
-                  <a href="../course.php?id=<?= $course["id"] ?>">
-                    <div class="prof_ps-cover">
-                      <img src="<?= $course["cover"] ?>" alt="">
-                    </div>
-                  </a>
-                  <div class="details__post-prf">
-                    <?php
-                    if ($_SESSION["user"]["userId"] == $course["teacher_id"]): ?>
-                      <div class="manage_article-ar">
-                        <span class="dots_port">
-                          <i class="fa-solid fa-ellipsis-vertical"></i>
-                        </span>
-                        <div class="mn_btns">
-                          <ul>
-                            <li>
-                              <a href="../course/update.php?action=read&courseId=<?= $course["id"] ?>">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                                <span>Edit Post</span>
-                              </a>
-                            </li>
-                            <div class="acc__line"></div>
-
-                            <li><a href="./user.php?action=deleteCourse&courseId=<?= $course["id"] ?>">
-                                <i class="fa-solid fa-trash"></i>
-                                <span>Delete Post</span>
-                              </a></li>
-                          </ul>
-                        </div>
-                      </div>
-                    <?php
-                    endif;
-                    ?>
-                    <div class="post__content-pr">
-
-                      <div class="art__author">
-                        <div class="author__pic">
-                          <?php
-                          if (isset($course["picture"])): ?>
-                            <img src="<?= $course["picture"] ?>" alt="<?= $course["firstName"] . " " . $course["lastName"] ?>" />
-                          <?php
-                          else:
-                          ?>
-                            <span><?= substr($course["firstName"], 0, 1) . substr($course["lastName"], 0, 1) ?></span>
-                          <?php
-                          endif;
-                          ?>
-                        </div>
-                        <div class="author__det">
-                          <div class="author__name">
-                            <h5><?= $course["firstName"] . " " . $course["lastName"] ?></h5>
-                          </div>
-                          <div class="art__date">
-                            <span><?= date('Y-m-d', strtotime($course["created_at"])) ?></span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="art__title">
-                        <a href="../course.php?id=<?= $course["id"] ?>">
-                          <h1>
-                            <?= $course["title"] ?>
-                          </h1>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
+      <?php
+      if ($_SESSION["user"]["role"] === "teacher"): ?>
+        <div class="prof__user-post">
+          <div class="prof__statistic">
+            <div class="prof__statistic-content">
+              <ul class="prof__statistic-list">
+                <li>
+                  <span><i class="fa-solid fa-signs-post"></i></span>
+                  <span><?= count($courses) > 0 ? count($courses) : 0 ?> course <?= $_SESSION["user"]["role"] === "teacher" ? "published" : "enrolled" ?> </span>
                 </li>
-              <?php
-              endforeach;
-              ?>
-            </ul>
+              </ul>
+            </div>
           </div>
+          <div class="prof__user-artcs">
+            <div class="user__artcs-content">
+              <ul class="user__artcs-list">
+                <?php
+                foreach ($courses as $course): ?>
+                  <li class="user__artcs-item">
+                    <a href="../course.php?id=<?= $course["id"] ?>">
+                      <div class="prof_ps-cover">
+                        <img src="<?= $course["cover"] ?>" alt="">
+                      </div>
+                    </a>
+                    <div class="details__post-prf">
+                      <?php
+                      if ($_SESSION["user"]["userId"] == $course["teacher_id"]): ?>
+                        <div class="manage_article-ar">
+                          <span class="dots_port">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                          </span>
+                          <div class="mn_btns">
+                            <ul>
+                              <li>
+                                <a href="../course/update.php?action=read&courseId=<?= $course["id"] ?>">
+                                  <i class="fa-solid fa-pen-to-square"></i>
+                                  <span>Edit Post</span>
+                                </a>
+                              </li>
+                              <div class="acc__line"></div>
+
+                              <li><a href="./user.php?action=deleteCourse&courseId=<?= $course["id"] ?>">
+                                  <i class="fa-solid fa-trash"></i>
+                                  <span>Delete Post</span>
+                                </a></li>
+                            </ul>
+                          </div>
+                        </div>
+                      <?php
+                      endif;
+                      ?>
+                      <div class="post__content-pr">
+
+                        <div class="art__author">
+                          <div class="author__pic">
+                            <?php
+                            if (isset($course["picture"])): ?>
+                              <img src="<?= $course["picture"] ?>" alt="<?= $course["firstName"] . " " . $course["lastName"] ?>" />
+                            <?php
+                            else:
+                            ?>
+                              <span><?= substr($course["firstName"], 0, 1) . substr($course["lastName"], 0, 1) ?></span>
+                            <?php
+                            endif;
+                            ?>
+                          </div>
+                          <div class="author__det">
+                            <div class="author__name">
+                              <h5><?= $course["firstName"] . " " . $course["lastName"] ?></h5>
+                            </div>
+                            <div class="art__date">
+                              <span><?= date('Y-m-d', strtotime($course["created_at"])) ?></span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="art__title">
+                          <a href="../course.php?id=<?= $course["id"] ?>">
+                            <h1>
+                              <?= $course["title"] ?>
+                            </h1>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                <?php
+                endforeach;
+                ?>
+              </ul>
+            </div>
+          </div>
+        <?php endif ?>
         </div>
-      </div>
     </div>
-
   </main>
-
   <script src="../../../../assets/js/main.js"></script>
 </body>
 

@@ -1,130 +1,136 @@
-<?php 
-session_start();
+<?php
 require_once __DIR__ . '/../../../vendor/autoload.php';
+
 use App\Controllers\TagController;
+use App\Middleware\RoleMiddleware;
+RoleMiddleware::handle(['admin']);
+
 $tagController = new TagController();
 $tags = $tagController->readAllTags();
 ?>
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../../../assets/css/dashboard/style.css" />
-    <script
-      src="https://kit.fontawesome.com/f01941449c.js"
-      crossorigin="anonymous"
-    ></script>
-    <title>Dashboard</title>
-  </head>
-  <body>
-    <div class="pages__content">
-      <aside class="side__content">
-        <header class="aside__header">
-          <a href="./dashboard.php">
-            <h1>MyBoard</h1>
-          </a>
-        </header>
-        <div class="pages__links">
-          <ul class="pages_list">
-            <li class="page_item">
-              <a href="./dashboard.php">
-                <span><i class="fa-solid fa-chart-simple"></i></span>
-                <span>Dashboard</span>
-              </a>
-            </li>
-            <li class="page_item">
-              <a href="./users.php">
-                <span><i class="fa-solid fa-user"></i></span>
-                <span>users</span>
-              </a>
-            </li>
-            <li class="page_item">
-              <a href="./courses.php">
-                <span><i class="fa-solid fa-newspaper"></i></span>
-                <span>Courses</span>
-              </a>
-            </li>
-            <li class="page_item active">
-              <a href="./tags.php">
-                <span><i class="fa-solid fa-tag"></i></span>
-                <span>tags</span>
-              </a>
-            </li>
-            <li class="page_item">
-              <a href="./categories.php">
-                <span><i class="fa-brands fa-dev"></i></span>
-                <span>categories</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </aside>
-      <main class="main__content">
-      <header class="main__header">
-                <nav class="navbar__content">
-                <a href="../front/index.php">
-                    <span><i class="fa-solid fa-house"></i></span>
-                </a>
-                <a href="../../controllers/Logout.php">
-                    <span>
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                    </span>
-                </a>
-                </nav>
-            </header>
 
-        <div class="cls__content">
-          <div class="heading">
-            <h1>Add new tag</h1>
-          </div>
-          <div class="add__cls">
-            <form action="../../controllers/TagController.php" method="POST" class="form__content">
-              <div class="form__input">
-                <label for="tag__name">Tag Name</label>
-                <!-- <input type="hidden" name="tagId" /> -->
-                <input type="text" name="tagName" placeholder="Tag name" />
-              </div>
-              <div class="submit_btn">
-                <button type="submit">Add</button>
-              </div>
-            </form>
-          </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../../../assets/css/dashboard/style.css" />
+  <script
+    src="https://kit.fontawesome.com/f01941449c.js"
+    crossorigin="anonymous"></script>
+  <title>Dashboard</title>
+</head>
+
+<body>
+  <div class="pages__content">
+    <aside class="side__content">
+      <header class="aside__header">
+        <a href="./dashboard.php">
+          <h1>MyBoard</h1>
+        </a>
+      </header>
+      <div class="pages__links">
+        <ul class="pages_list">
+          <li class="page_item">
+            <a href="./dashboard.php">
+              <span><i class="fa-solid fa-chart-simple"></i></span>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="page_item">
+            <a href="./users.php">
+              <span><i class="fa-solid fa-user"></i></span>
+              <span>users</span>
+            </a>
+          </li>
+          <li class="page_item">
+            <a href="./courses.php">
+              <span><i class="fa-solid fa-newspaper"></i></span>
+              <span>Courses</span>
+            </a>
+          </li>
+          <li class="page_item active">
+            <a href="./tags.php">
+              <span><i class="fa-solid fa-tag"></i></span>
+              <span>tags</span>
+            </a>
+          </li>
+          <li class="page_item">
+            <a href="./categories.php">
+              <span><i class="fa-brands fa-dev"></i></span>
+              <span>categories</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <main class="main__content">
+      <header class="main__header">
+        <nav class="navbar__content">
+          <a href="../front/index.php">
+            <span><i class="fa-solid fa-house"></i></span>
+          </a>
+          <a href="../../controllers/Logout.php">
+            <span style="display: flex; gap: 1rem; align-items: center;">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <p style="font-size: 1.4rem;">Disconnected</p>
+            </span>
+          </a>
+        </nav>
+      </header>
+
+      <div class="cls__content">
+        <div class="heading">
+          <h1>Add new tag</h1>
         </div>
-        <section class="cls__section">
-          <div class="heading">
-            <h1>Tags list (<?= count($tags) ?>)</h1>
-          </div>
-          <ul class="cls__list">
-            <?php 
-            if(isset($tags)):?>
-            <?php 
-            foreach($tags as $tag): ?>
-            <li class="cls__card">
-              <div class="cls__name">
-                <span><span>#</span><span><?= $tag["name"]?></span></span>
-              </div>
-              <div class="cls__management">
-                <span>
-                  <a href="./updateTag.php?action=updateTag&tagId=<?= $tag["id"] ?>">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                  </a>
-                </span>
-                <span>
-                  <a href="./tags.php?action=deleteTag&tagId=<?= $tag["id"] ?>">
-                    <i class="fa-solid fa-trash-can"></i>
-                  </a>
-                </span>
-              </div>
-            </li>
+        <div class="add__cls">
+          <form action="../../controllers/TagController.php" method="POST" class="form__content">
+            <div class="form__input">
+              <label for="tag__name">Tag Name</label>
+              <!-- <input type="hidden" name="tagId" /> -->
+              <input type="text" name="tagName" placeholder="Tag name" />
+            </div>
+            <div class="submit_btn">
+              <button type="submit">Add</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <section class="cls__section">
+        <div class="heading">
+          <h1>Tags list (<?= count($tags) ?>)</h1>
+        </div>
+        <ul class="cls__list">
+          <?php
+          if (isset($tags)): ?>
+            <?php
+            foreach ($tags as $tag): ?>
+              <li class="cls__card">
+                <div class="cls__name">
+                  <span><span>#</span><span><?= $tag["name"] ?></span></span>
+                </div>
+                <div class="cls__management">
+                  <span>
+                    <a href="./updateTag.php?action=updateTag&tagId=<?= $tag["id"] ?>">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+                  </span>
+                  <span>
+                    <a href="./tags.php?action=deleteTag&tagId=<?= $tag["id"] ?>">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </a>
+                  </span>
+                </div>
+              </li>
             <?php endforeach ?>
-            <?php 
-            else: ?>
+          <?php
+          else: ?>
             <p>No tags to show!</p>
-            <?php endif ?>
-          </ul>
-        </section>
-      </main>
-    </div>
-  </body>
+          <?php endif ?>
+        </ul>
+      </section>
+    </main>
+  </div>
+</body>
+
 </html>

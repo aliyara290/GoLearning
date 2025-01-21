@@ -1,6 +1,9 @@
 <?php
 require __DIR__ . "/../../controllers/UserController.php";
 
+if (isset($_SESSION['user'])) {
+    header("location: /app/views/front/index.php");
+}
 use App\Controllers\UserController;
 
 $userController = new UserController();

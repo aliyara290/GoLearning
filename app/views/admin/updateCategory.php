@@ -1,97 +1,103 @@
-<?php 
-session_start();
+<?php
 require_once __DIR__ . '/../../../vendor/autoload.php';
+
 use App\Controllers\CategoryController;
+use App\Middleware\RoleMiddleware;
+RoleMiddleware::handle(['admin']);
+
 $categoryController = new CategoryController();
 $category = $categoryController->readCategoryById();
 ?>
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../../../assets/css/dashboard/style.css" />
-    <script
-      src="https://kit.fontawesome.com/f01941449c.js"
-      crossorigin="anonymous"
-    ></script>
-    <title>Dashboard</title>
-  </head>
-  <body>
-    <div class="pages__content">
-      <aside class="side__content">
-        <header class="aside__header">
-          <a href="./dashboard.php">
-            <h1>MyBoard</h1>
-          </a>
-        </header>
-        <div class="pages__links">
-          <ul class="pages_list">
-            <li class="page_item">
-              <a href="./dashboard.php">
-                <span><i class="fa-solid fa-chart-simple"></i></span>
-                <span>Dashboard</span>
-              </a>
-            </li>
-            <li class="page_item">
-              <a href="./users.php">
-                <span><i class="fa-solid fa-user"></i></span>
-                <span>users</span>
-              </a>
-            </li>
-            <li class="page_item">
-              <a href="./courses.php">
-                <span><i class="fa-solid fa-newspaper"></i></span>
-                <span>Courses</span>
-              </a>
-            </li>
-            <li class="page_item">
-              <a href="./tags.php">
-                <span><i class="fa-solid fa-tag"></i></span>
-                <span>tags</span>
-              </a>
-            </li>
-            <li class="page_item">
-              <a href="./categories.php">
-                <span><i class="fa-brands fa-dev"></i></span>
-                <span>categories</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </aside>
-      <main class="main__content">
-      <header class="main__header">
-                <nav class="navbar__content">
-                <a href="../front/index.php">
-                    <span><i class="fa-solid fa-house"></i></span>
-                </a>
-                <a href="../../controllers/Logout.php">
-                    <span>
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                    </span>
-                </a>
-                </nav>
-            </header>
 
-        <div class="cls__content">
-          <div class="heading">
-            <h1>Update category</h1>
-          </div>
-          <div class="add__cls">
-            <form action="updateCategory.php" method="post" class="form__content">
-              <div class="form__input">
-                  <input type="hidden" value=<?= $_GET["categoryId"]?> name="categoryId" />
-                <label for="updateCategoryName">New tag name</label>
-                <input type="text" name="updateCategoryName" value=<?= $category[0]["name"] ?> placeholder="New category name" />
-              </div>
-              <div class="submit_btn">
-                <button type="submit" name="update" style="background-color: green;">Update</button>
-              </div>
-            </form>
-          </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../../../assets/css/dashboard/style.css" />
+  <script
+    src="https://kit.fontawesome.com/f01941449c.js"
+    crossorigin="anonymous"></script>
+  <title>Dashboard</title>
+</head>
+
+<body>
+  <div class="pages__content">
+    <aside class="side__content">
+      <header class="aside__header">
+        <a href="./dashboard.php">
+          <h1>MyBoard</h1>
+        </a>
+      </header>
+      <div class="pages__links">
+        <ul class="pages_list">
+          <li class="page_item">
+            <a href="./dashboard.php">
+              <span><i class="fa-solid fa-chart-simple"></i></span>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="page_item">
+            <a href="./users.php">
+              <span><i class="fa-solid fa-user"></i></span>
+              <span>users</span>
+            </a>
+          </li>
+          <li class="page_item">
+            <a href="./courses.php">
+              <span><i class="fa-solid fa-newspaper"></i></span>
+              <span>Courses</span>
+            </a>
+          </li>
+          <li class="page_item">
+            <a href="./tags.php">
+              <span><i class="fa-solid fa-tag"></i></span>
+              <span>tags</span>
+            </a>
+          </li>
+          <li class="page_item">
+            <a href="./categories.php">
+              <span><i class="fa-brands fa-dev"></i></span>
+              <span>categories</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <main class="main__content">
+      <header class="main__header">
+        <nav class="navbar__content">
+          <a href="../front/index.php">
+            <span><i class="fa-solid fa-house"></i></span>
+          </a>
+          <a href="../../controllers/Logout.php">
+            <span style="display: flex; gap: 1rem; align-items: center;">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <p style="font-size: 1.4rem;">Disconnected</p>
+            </span>
+          </a>
+        </nav>
+      </header>
+
+      <div class="cls__content">
+        <div class="heading">
+          <h1>Update category</h1>
         </div>
-      </main>
-    </div>
-  </body>
+        <div class="add__cls">
+          <form action="updateCategory.php" method="post" class="form__content">
+            <div class="form__input">
+              <input type="hidden" value=<?= $_GET["categoryId"] ?> name="categoryId" />
+              <label for="updateCategoryName">New tag name</label>
+              <input type="text" name="updateCategoryName" value=<?= $category[0]["name"] ?> placeholder="New category name" />
+            </div>
+            <div class="submit_btn">
+              <button type="submit" name="update" style="background-color: green;">Update</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+
 </html>

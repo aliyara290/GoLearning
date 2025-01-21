@@ -6,11 +6,12 @@ use App\Controllers\CourseController;
 use App\Controllers\StudentController;
 
 $id = $_GET["id"];
+$student_id = $_SESSION["user"]["userId"];
 $courseController = new CourseController();
 $coursePost = $courseController->readCourseById($id);
 $studentController = new StudentController();
 $studentController->enrollInCourse($id);
-
+$isEnrolled = $studentController->isEnrolled($student_id, $id);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,8 +52,8 @@ $studentController->enrollInCourse($id);
             <div class="user_picture user__pic-nav">
               <div class="u__pic">
                 <?php
-                if (isset($_SESSION["user"]["userPic"])): ?>
-                  <img src="../<?= $_SESSION["user"]["picture"] ?>" alt="<?= $_SESSION["user"]["fullName"] ?>">
+                if (isset($_SESSION["user"]["picture"])): ?>
+                  <img src="<?= $_SESSION["user"]["picture"] ?>" alt="<?= $_SESSION["user"]["fullName"] ?>">
                 <?php
                 else:
                 ?>
@@ -76,15 +77,26 @@ $studentController->enrollInCourse($id);
                     <span><i class="fa-solid fa-gear"></i></span>
                     <span>Setting</span>
                   </a></li>
+                <?php
+                if ($_SESSION["user"]["role"] === "student"): ?>
+                  <li class="menu_item"><a href="./myCourses/">
+                      <span><i class="fa-solid fa-book"></i></span>
+                      <span>My Courses</span>
+                    </a>
+                  </li>
+                <?php
+                endif;
+                ?>
                 <?php if ($_SESSION["user"]["role"] === "teacher"): ?>
-                  <li class="menu_item"><a href="./createcourse/new.php">
+                  <li class="menu_item"><a href="./course/new.php">
                       <span><i class="fa-solid fa-newspaper"></i></span>
-                      <span>Create post</span>
+                      <span>Create course</span>
                     </a></li>
                   <li class="menu_item"><a href="./statistic/statistic.php">
                       <span><i class="fa-solid fa-chart-simple"></i></span>
                       <span>Statistic</span>
                     </a></li>
+
                 <?php endif ?>
                 <div class="acc__line"></div>
                 <li class="menu_item">
@@ -215,23 +227,36 @@ $studentController->enrollInCourse($id);
       </div>
       <?php
       if (isset($_SESSION["user"]) && $_SESSION["user"]["role"] === "student"): ?>
-        <div class="aside__content-card enroll-card">
-          <div class="enroll_heading">
-            <h3>Enroll in this course</h3>
+        <?php
+        if ($isEnrolled): ?>
+          <div class="aside__content-card enroll-card">
+            <div class="enroll_heading">
+              <h3>You are already enrolled</h3>
+            </div>
+            <div class="enroll_button">
+              <a href="./learn.php?courseId=<?= $coursePost['id'] ?>">
+                <button class="button__comp">
+                  Go to Course
+                </button>
+              </a>
+            </div>
           </div>
-          <div class="enroll_button">
-            <form action="course.php"  method="post">
-              <input type="hidden" name="courseId" value="<?= $coursePost["id"] ?>">
-              <input type="hidden" name="studentId" value="<?= $_SESSION["user"]["userId"] ?>">
-              <button type="submit" class="button__comp">
-                Enroll now
-              </button>
-            </form>
+        <?php else: ?>
+          <div class="aside__content-card enroll-card">
+            <div class="enroll_heading">
+              <h3>Enroll in this course</h3>
+            </div>
+            <div class="enroll_button">
+              <form action="course.php" method="post">
+                <input type="hidden" name="courseId" value="<?= $coursePost["id"] ?>">
+                <input type="hidden" name="studentId" value="<?= $_SESSION["user"]["userId"] ?>">
+                <button type="submit" class="button__comp">
+                  Enroll now
+                </button>
+              </form>
+            </div>
           </div>
-          <div class="count_students-cd">
-            <p><strong>122</strong> Already enrolled</p>
-          </div>
-        </div>
+        <?php endif ?>
       <?php endif ?>
     </aside>
   </div>

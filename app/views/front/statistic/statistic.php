@@ -1,4 +1,8 @@
-<?php session_start() ?>
+<?php
+require_once __DIR__ . '/../../../../vendor/autoload.php';
+use App\Middleware\RoleMiddleware;
+RoleMiddleware::handle(['teacher']);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,9 +38,9 @@
           <?php endif ?>
           <li class="page_link">
             <div class="user_picture user__pic-nav">
-              <div class="u__pic">
+            <div class="u__pic">
                 <?php
-                if (isset($_SESSION["user"]["userPic"])): ?>
+                if (isset($_SESSION["user"]["picture"])): ?>
                   <img src="../<?= $_SESSION["user"]["picture"] ?>" alt="<?= $_SESSION["user"]["fullName"] ?>">
                 <?php
                 else:
@@ -62,9 +66,9 @@
                     <span>Setting</span>
                   </a></li>
                 <?php if ($_SESSION["user"]["role"] === "teacher"): ?>
-                  <li class="menu_item"><a href="../createcourse/new.php">
+                  <li class="menu_item"><a href="../course/new.php">
                       <span><i class="fa-solid fa-newspaper"></i></span>
-                      <span>Create post</span>
+                      <span>Create course</span>
                     </a></li>
                   <li class="menu_item"><a href="../statistic/statistic.php">
                       <span><i class="fa-solid fa-chart-simple"></i></span>
@@ -124,11 +128,11 @@
         </li>
       </ul>
     </section>
-    <search class="chars__cards-tr">
+    <section class="chars__cards-tr">
       <div class="char__statistic">
       <canvas id="playersByPosition" width="600" height="400"></canvas>
       </div>
-    </search>
+    </section>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>

@@ -1,14 +1,13 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../../vendor/autoload.php';
+
 use App\Controllers\UserProfileController;
+use App\Middleware\RoleMiddleware;
+
+RoleMiddleware::handle(['teacher', 'admin', 'student']);
 $userProfileController = new UserProfileController();
 $userProfileController->updataProfileData();
 $portfolio = $userProfileController->displayUserPortfolio();
-if (!isset($_SESSION["user"])) {
-  header("Location: /deV.io/src/views/front/login.php");
-  exit();
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,16 +37,16 @@ if (!isset($_SESSION["user"])) {
         <?php if (isset($_SESSION["user"])): ?>
           <?php if ($_SESSION["user"]["role"] === "teacher"): ?>
             <li class="page_link">
-              <a href="./course/new.php">
+              <a href="../course/new.php">
                 <button class="button__comp">Create course</button>
               </a>
             </li>
           <?php endif ?>
           <li class="page_link">
             <div class="user_picture user__pic-nav">
-              <div class="u__pic">
+            <div class="u__pic">
                 <?php
-                if (isset($_SESSION["user"]["userPic"])): ?>
+                if (isset($_SESSION["user"]["picture"])): ?>
                   <img src="../<?= $_SESSION["user"]["picture"] ?>" alt="<?= $_SESSION["user"]["fullName"] ?>">
                 <?php
                 else:
@@ -72,15 +71,26 @@ if (!isset($_SESSION["user"])) {
                     <span><i class="fa-solid fa-gear"></i></span>
                     <span>Setting</span>
                   </a></li>
+                <?php
+                if ($_SESSION["user"]["role"] === "student"): ?>
+                  <li class="menu_item"><a href="../myCourses/">
+                      <span><i class="fa-solid fa-book"></i></span>
+                      <span>My Courses</span>
+                    </a>
+                  </li>
+                <?php
+                endif;
+                ?>
                 <?php if ($_SESSION["user"]["role"] === "teacher"): ?>
-                  <li class="menu_item"><a href="../createcourse/new.php">
+                  <li class="menu_item"><a href="../course/new.php">
                       <span><i class="fa-solid fa-newspaper"></i></span>
-                      <span>Create post</span>
+                      <span>Create course</span>
                     </a></li>
                   <li class="menu_item"><a href="../statistic/statistic.php">
                       <span><i class="fa-solid fa-chart-simple"></i></span>
                       <span>Statistic</span>
                     </a></li>
+
                 <?php endif ?>
                 <div class="acc__line"></div>
                 <li class="menu_item">
@@ -211,11 +221,16 @@ if (!isset($_SESSION["user"])) {
             <textarea name="user__bio" id="user__bio" placeholder="bio..."><?= $portfolio["bio"] ?></textarea>
           </div>
         </section>
-        <div class="submit_btn">
-          <button class="button__comp">Save Profile Information</button>
+        <div class="upd-button__style">
+          <button type="submit" class="upd__btn" name="update_article">
+            Update profile
+          </button>
+          <a href="../profile/user.php">
+            <div class="cancel_btn">
+              Cancel
+            </div>
+          </a>
         </div>
-
-
       </form>
     </div>
   </main>

@@ -1,8 +1,10 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use App\Controllers\CourseController;
+use App\Middleware\RoleMiddleware;
+
+RoleMiddleware::handle(['student']);
 
 $courseController = new CourseController();
 $id = $_GET["courseId"];
@@ -46,8 +48,8 @@ $course = $courseController->readCourseById($id);
                         <div class="user_picture user__pic-nav">
                             <div class="u__pic">
                                 <?php
-                                if (isset($_SESSION["user"]["userPic"])): ?>
-                                    <img src="../<?= $_SESSION["user"]["picture"] ?>" alt="<?= $_SESSION["user"]["fullName"] ?>">
+                                if (isset($_SESSION["user"]["picture"])): ?>
+                                    <img src="<?= $_SESSION["user"]["picture"] ?>" alt="<?= $_SESSION["user"]["fullName"] ?>">
                                 <?php
                                 else:
                                 ?>
@@ -71,6 +73,16 @@ $course = $courseController->readCourseById($id);
                                         <span><i class="fa-solid fa-gear"></i></span>
                                         <span>Setting</span>
                                     </a></li>
+                                <?php
+                                if ($_SESSION["user"]["role"] === "student"): ?>
+                                    <li class="menu_item"><a href="./myCourses/">
+                                            <span><i class="fa-solid fa-book"></i></span>
+                                            <span>My Courses</span>
+                                        </a>
+                                    </li>
+                                <?php
+                                endif;
+                                ?>
                                 <?php if ($_SESSION["user"]["role"] === "teacher"): ?>
                                     <li class="menu_item"><a href="./createcourse/new.php">
                                             <span><i class="fa-solid fa-newspaper"></i></span>
@@ -80,6 +92,7 @@ $course = $courseController->readCourseById($id);
                                             <span><i class="fa-solid fa-chart-simple"></i></span>
                                             <span>Statistic</span>
                                         </a></li>
+
                                 <?php endif ?>
                                 <div class="acc__line"></div>
                                 <li class="menu_item">
@@ -134,16 +147,16 @@ $course = $courseController->readCourseById($id);
                     <h3><?= $course["title"] ?></h3>
                 </div>
             </div>
-            <?php 
-            if(isset($course["video"])):?>
-            <div class="course__video">
-                <iframe src="<?= $course["video"] ?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-            </div>
+            <?php
+            if (isset($course["video"])): ?>
+                <div class="course__video">
+                    <iframe src="<?= $course["video"] ?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
             <?php else: ?>
                 <div class="course__description-lr">
                     <p><?= $course["content"] ?></p>
                 </div>
-            <?php endif?>
+            <?php endif ?>
         </div>
     </main>
     <script src="../../../assets/js/main.js"></script>

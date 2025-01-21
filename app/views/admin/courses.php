@@ -1,7 +1,9 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../vendor/autoload.php';
+
 use App\Controllers\CourseController;
+use App\Middleware\RoleMiddleware;
+RoleMiddleware::handle(['admin']);
 
 $courseController = new CourseController();
 
@@ -95,8 +97,9 @@ if (isset($_GET["action"], $_GET["courseId"])) {
                         <span><i class="fa-solid fa-house"></i></span>
                     </a>
                     <a href="../../controllers/Logout.php">
-                        <span>
+                        <span style="display: flex; gap: 1rem; align-items: center;">
                             <i class="fa-solid fa-right-from-bracket"></i>
+                            <p style="font-size: 1.4rem;">Disconnected</p>
                         </span>
                     </a>
                 </nav>

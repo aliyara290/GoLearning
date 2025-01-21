@@ -37,8 +37,8 @@
             <div class="user_picture user__pic-nav">
               <div class="u__pic">
                 <?php
-                if (isset($_SESSION["user"]["userPic"])): ?>
-                  <img src="../<?= $_SESSION["user"]["picture"] ?>" alt="<?= $_SESSION["user"]["fullName"] ?>">
+                if (isset($_SESSION["user"]["picture"])): ?>
+                  <img src="<?= $_SESSION["user"]["picture"] ?>" alt="<?= $_SESSION["user"]["fullName"] ?>">
                 <?php
                 else:
                 ?>
@@ -53,7 +53,7 @@
                 <li class="menu_item">
                   <a href="./profile/user.php" class="acc_us">
                     <span> <?= $_SESSION["user"]["fullName"] ?> </span>
-                    <span> @<?= $_SESSION["user"]["fullName"] ?> </span>
+                    <span> @<?= $_SESSION["user"]["username"] ?> </span>
                   </a>
                 </li>
                 <div class="acc__line"></div>
@@ -61,11 +61,22 @@
                 <li class="menu_item"><a href="./setting/profile.php">
                     <span><i class="fa-solid fa-gear"></i></span>
                     <span>Setting</span>
-                  </a></li>
+                  </a>
+                </li>
+                <?php 
+                if($_SESSION["user"]["role"] === "student"): ?>
+                <li class="menu_item"><a href="./myCourses/">
+                    <span><i class="fa-solid fa-book"></i></span>
+                    <span>My Courses</span>
+                  </a>
+                </li>
+                <?php
+                endif;
+                ?>
                 <?php if ($_SESSION["user"]["role"] === "teacher"): ?>
-                  <li class="menu_item"><a href="./createcourse/new.php">
+                  <li class="menu_item"><a href="./course/new.php">
                       <span><i class="fa-solid fa-newspaper"></i></span>
-                      <span>Create post</span>
+                      <span>Create course</span>
                     </a></li>
                   <li class="menu_item"><a href="./statistic/statistic.php">
                       <span><i class="fa-solid fa-chart-simple"></i></span>
@@ -113,7 +124,7 @@
       </h1>
 
       <p class="text-white mx-auto mt-4 max-w-4xl sm:text-3xl/relaxed">
-      Join thousands of learners on GoLearning and access unlimited courses to achieve your career goals. Upgrade your skills and grow with expert guidance!
+        Join thousands of learners on GoLearning and access unlimited courses to achieve your career goals. Upgrade your skills and grow with expert guidance!
       </p>
 
       <div class="mt-8 flex flex-wrap justify-center gap-4">

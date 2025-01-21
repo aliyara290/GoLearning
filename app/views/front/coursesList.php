@@ -7,7 +7,15 @@ use App\Controllers\CourseController;
 $courseController = new CourseController();
 $limit = 6;
 $page = isset($_GET["page"]) ? $_GET["page"] : 1;
-$courses = $courseController->readAllCourses("active", $page, $limit);
+if (isset($_GET["search"])) {
+    if ($_GET["search"] === "") {
+        $courses = $courseController->readAllCourses("active", $page, $limit);
+    } else {
+        $courses = $courseController->searchForCourse();
+    }
+} else {
+    $courses = $courseController->readAllCourses("active", $page, $limit);
+}
 ?>
 
 <!DOCTYPE html>
@@ -32,6 +40,12 @@ $courses = $courseController->readAllCourses("active", $page, $limit);
                     <h1><span>Go</span>Learning</h1>
                 </a>
             </div>
+            <div class="search__bar">
+                <form action="coursesList.php" method="GET" class="search__form-ds">
+                    <input type="text" name="search" placeholder="Search for courses..." />
+                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
+            </div>
         </div>
         </div>
         <nav class="navbar_content">
@@ -48,8 +62,8 @@ $courses = $courseController->readAllCourses("active", $page, $limit);
                         <div class="user_picture user__pic-nav">
                             <div class="u__pic">
                                 <?php
-                                if (isset($_SESSION["user"]["userPic"])): ?>
-                                    <img src="../<?= $_SESSION["user"]["picture"] ?>" alt="<?= $_SESSION["user"]["fullName"] ?>">
+                                if (isset($_SESSION["user"]["picture"])): ?>
+                                    <img src="<?= $_SESSION["user"]["picture"] ?>" alt="<?= $_SESSION["user"]["fullName"] ?>">
                                 <?php
                                 else:
                                 ?>
@@ -73,15 +87,26 @@ $courses = $courseController->readAllCourses("active", $page, $limit);
                                         <span><i class="fa-solid fa-gear"></i></span>
                                         <span>Setting</span>
                                     </a></li>
+                                <?php
+                                if ($_SESSION["user"]["role"] === "student"): ?>
+                                    <li class="menu_item"><a href="./myCourses/">
+                                            <span><i class="fa-solid fa-book"></i></span>
+                                            <span>My Courses</span>
+                                        </a>
+                                    </li>
+                                <?php
+                                endif;
+                                ?>
                                 <?php if ($_SESSION["user"]["role"] === "teacher"): ?>
-                                    <li class="menu_item"><a href="./createcourse/new.php">
+                                    <li class="menu_item"><a href="./course/new.php">
                                             <span><i class="fa-solid fa-newspaper"></i></span>
-                                            <span>Create post</span>
+                                            <span>Create course</span>
                                         </a></li>
                                     <li class="menu_item"><a href="./statistic/statistic.php">
                                             <span><i class="fa-solid fa-chart-simple"></i></span>
                                             <span>Statistic</span>
                                         </a></li>
+
                                 <?php endif ?>
                                 <div class="acc__line"></div>
                                 <li class="menu_item">
@@ -192,72 +217,118 @@ $courses = $courseController->readAllCourses("active", $page, $limit);
             <div class="c-heading">
                 <h2>Our popular courses</h2>
             </div>
-
-            <ul class="articles__list">
-                <?php
-                if ($courses["totalRecords"] > 0) : ?>
+            <?php
+            if (isset($_GET["search"]) && $_GET["search"] !== ""): ?>
+                <ul class="articles__list">
                     <?php
-                    foreach ($courses["records"] as $course): ?>
-                        <li class="pending__course">
-                            <a href="../front/course.php?id=<?= $course["id"] ?>">
-                                <div class="course__cover">
-                                    <img src="<?= $course["cover"] ?>" alt="">
-                                </div>
-                                <div class="courseTeacher">
-                                    <div class="teacher__picture-c">
-                                        <?php
-                                        if (isset($course["picture"])): ?>
-                                            <img src="<?= $course["picture"] ?> " alt="">
-                                        <?php else: ?>
-                                            <span><?= substr($course["firstName"], 0, 1) . substr($course["lastName"], 0, 1) ?></span>
-                                        <?php endif ?>
+                    if ($courses > 0) : ?>
+                        <?php
+                        foreach ($courses as $course): ?>
+                            <li class="pending__course">
+                                <a href="../front/course.php?id=<?= $course["id"] ?>">
+                                    <div class="course__cover">
+                                        <img src="<?= $course["cover"] ?>" alt="">
                                     </div>
-                                    <div class="teacher__name-c">
-                                        <span>
-                                            <p><?= $course["firstName"] . " " . $course["lastName"] ?></p>
-                                        </span>
+                                    <div class="courseTeacher">
+                                        <div class="teacher__picture-c">
+                                            <?php
+                                            if (isset($course["picture"])): ?>
+                                                <img src="<?= $course["picture"] ?> " alt="">
+                                            <?php else: ?>
+                                                <span><?= substr($course["firstName"], 0, 1) . substr($course["lastName"], 0, 1) ?></span>
+                                            <?php endif ?>
+                                        </div>
+                                        <div class="teacher__name-c">
+                                            <span>
+                                                <p><?= $course["firstName"] . " " . $course["lastName"] ?></p>
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="course__title-c">
-                                    <h3><?= $course["title"] ?></h3>
-                                </div>
-                                <div class="course__skills-c">
-                                    <p><strong>Skills you'll gain: </strong><span style="text-transform:capitalize;"><?= $course["tags"] ?></span></p>
-                                </div>
-                            </a>
-                        </li>
-                    <?php endforeach ?>
-                <?php else: ?>
-                    <div class="no__articles-pend">
-                        <p>No pending courses to show!</p>
-                    </div>
-                <?php endif ?>
-            </ul>
-            <div class="pagination-container">
-                <nav>
-                    <ul class="pagination-list">
-                        <?php if ($courses['currentPage'] > 1): ?>
-                            <li>
-                                <a href="?page=<?= $courses['currentPage'] - 1 ?>" class="pagination-link pagination-prev">Prev</a>
-                            </li>
-                        <?php endif; ?>
-
-                        <?php for ($i = 1; $i <= $courses['totalPages']; $i++): ?>
-                            <li>
-                                <a href="?page=<?= $i ?>" class="pagination-link <?= $i == $courses['currentPage'] ? 'active' : '' ?>">
-                                    <?= $i ?>
+                                    <div class="course__title-c">
+                                        <h3><?= $course["title"] ?></h3>
+                                    </div>
+                                    <div class="course__skills-c">
+                                        <p><strong>Skills you'll gain: </strong><span style="text-transform:capitalize;"><?= $course["tags"] ?></span></p>
+                                    </div>
                                 </a>
                             </li>
-                        <?php endfor; ?>
-
-                        <?php if ($courses['currentPage'] < $courses['totalPages']): ?>
-                            <li>
-                                <a href="?page=<?= $courses['currentPage'] + 1 ?>" class="pagination-link pagination-next">Next</a>
+                        <?php endforeach ?>
+                    <?php else: ?>
+                        <div class="no__articles-pend">
+                            <p>No pending courses to show!</p>
+                        </div>
+                    <?php endif ?>
+                </ul>
+            <?php else: ?>
+                <ul class="articles__list">
+                    <?php
+                    if ($courses["totalRecords"] > 0) : ?>
+                        <?php
+                        foreach ($courses["records"] as $course): ?>
+                            <li class="pending__course">
+                                <a href="../front/course.php?id=<?= $course["id"] ?>">
+                                    <div class="course__cover">
+                                        <img src="<?= $course["cover"] ?>" alt="">
+                                    </div>
+                                    <div class="courseTeacher">
+                                        <div class="teacher__picture-c">
+                                            <?php
+                                            if (isset($course["picture"])): ?>
+                                                <img src="<?= $course["picture"] ?> " alt="">
+                                            <?php else: ?>
+                                                <span><?= substr($course["firstName"], 0, 1) . substr($course["lastName"], 0, 1) ?></span>
+                                            <?php endif ?>
+                                        </div>
+                                        <div class="teacher__name-c">
+                                            <span>
+                                                <p><?= $course["firstName"] . " " . $course["lastName"] ?></p>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="course__title-c">
+                                        <h3><?= $course["title"] ?></h3>
+                                    </div>
+                                    <div class="course__skills-c">
+                                        <p><strong>Skills you'll gain: </strong><span style="text-transform:capitalize;"><?= $course["tags"] ?></span></p>
+                                    </div>
+                                </a>
                             </li>
-                        <?php endif; ?>
-                    </ul>
-                </nav>
-            </div>
+                        <?php endforeach ?>
+                    <?php else: ?>
+                        <div class="no__articles-pend">
+                            <p>No pending courses to show!</p>
+                        </div>
+                    <?php endif ?>
+                </ul>
+            <?php endif ?>
+            <?php
+            if (!isset($_GET["search"])): ?>
+                <div class="pagination-container">
+                    <nav>
+                        <ul class="pagination-list">
+                            <?php if ($courses['currentPage'] > 1): ?>
+                                <li>
+                                    <a href="?page=<?= $courses['currentPage'] - 1 ?>" class="pagination-link pagination-prev">Prev</a>
+                                </li>
+                            <?php endif; ?>
+
+                            <?php for ($i = 1; $i <= $courses['totalPages']; $i++): ?>
+                                <li>
+                                    <a href="?page=<?= $i ?>" class="pagination-link <?= $i == $courses['currentPage'] ? 'active' : '' ?>">
+                                        <?= $i ?>
+                                    </a>
+                                </li>
+                            <?php endfor; ?>
+
+                            <?php if ($courses['currentPage'] < $courses['totalPages']): ?>
+                                <li>
+                                    <a href="?page=<?= $courses['currentPage'] + 1 ?>" class="pagination-link pagination-next">Next</a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                    </nav>
+                </div>
+            <?php endif ?>
             <footer class="footer">
                 <div class="footer-container">
                     <p class="footer-text">&copy; 2025 <span class="footer-brand">Medium</span>. All rights reserved.</p>

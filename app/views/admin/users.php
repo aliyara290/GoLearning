@@ -1,13 +1,15 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../vendor/autoload.php';
-use App\Controllers\UserController;
 
-$userController = new UserController();
-$users = $userController->getAllUers("pending");
-$userController->activeUser();
-$userController->suspendUser();
-$userController->deleteUser();
+use App\Controllers\AdminController;
+use App\Middleware\RoleMiddleware;
+RoleMiddleware::handle(['admin']);
+
+$adminController = new AdminController();
+$users = $adminController->getAllUers("pending");
+$adminController->activeUser();
+$adminController->suspendUser();
+$adminController->deleteUser();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,8 +74,9 @@ $userController->deleteUser();
             <span><i class="fa-solid fa-house"></i></span>
           </a>
           <a href="../../controllers/Logout.php">
-            <span>
+            <span style="display: flex; gap: 1rem; align-items: center;">
               <i class="fa-solid fa-right-from-bracket"></i>
+              <p style="font-size: 1.4rem;">Disconnected</p>
             </span>
           </a>
         </nav>
@@ -173,7 +176,7 @@ $userController->deleteUser();
                   <?php
                   if ($user["role"] == "teacher" && $user["status"] == "pending"): ?>
                     <tr class="table-row">
-                    <td class="table-data"><?= $user["id"] ?></td>
+                      <td class="table-data"><?= $user["id"] ?></td>
                       <td class="table-data"><?= $user["firstName"] . " " . $user["lastName"] ?></td>
                       <td class="table-data"><?= $user["email"] ?></td>
                       <td class="table-data"><?= $user["username"] ?></td>
@@ -245,7 +248,7 @@ $userController->deleteUser();
                   <?php
                   if ($user["status"] == "suspended"): ?>
                     <tr class="table-row">
-                    <td class="table-data"><?= $user["id"] ?></td>
+                      <td class="table-data"><?= $user["id"] ?></td>
                       <td class="table-data"><?= $user["firstName"] . " " . $user["lastName"] ?></td>
                       <td class="table-data"><?= $user["email"] ?></td>
                       <td class="table-data"><?= $user["username"] ?></td>

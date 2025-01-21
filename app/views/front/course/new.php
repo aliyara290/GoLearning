@@ -1,10 +1,12 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
 use App\Controllers\TagController;
 use App\Controllers\CourseController;
 use App\Controllers\CategoryController;
+use App\Middleware\RoleMiddleware;
+
+RoleMiddleware::handle(['teacher']);
 
 $courseController = new CourseController();
 $courseController->createCourse();
@@ -54,7 +56,7 @@ $categories = $categoryController->readAllCategories();
             <div class="user_picture user__pic-nav">
               <div class="u__pic">
                 <?php
-                if (isset($_SESSION["user"]["userPic"])): ?>
+                if (isset($_SESSION["user"]["picture"])): ?>
                   <img src="../<?= $_SESSION["user"]["picture"] ?>" alt="<?= $_SESSION["user"]["fullName"] ?>">
                 <?php
                 else:
@@ -80,9 +82,9 @@ $categories = $categoryController->readAllCategories();
                     <span>Setting</span>
                   </a></li>
                 <?php if ($_SESSION["user"]["role"] === "teacher"): ?>
-                  <li class="menu_item"><a href="../createcourse/new.php">
+                  <li class="menu_item"><a href="../course/new.php">
                       <span><i class="fa-solid fa-newspaper"></i></span>
-                      <span>Create post</span>
+                      <span>Create course</span>
                     </a></li>
                   <li class="menu_item"><a href="../statistic/statistic.php">
                       <span><i class="fa-solid fa-chart-simple"></i></span>
