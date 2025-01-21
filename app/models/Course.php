@@ -21,7 +21,7 @@ class Course
     private string $categoryId;
     private array $tags = [];
     private int $teacherId;
-    
+
     public function __construct()
     {
         $this->pdo = Database::getInstance();
