@@ -93,5 +93,4 @@ abstract class User {
             echo "failed to register: " . $error->getMessage();
         }
     }
-
 }

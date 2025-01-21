@@ -21,7 +21,6 @@ class Category {
     public function getCategoryName() {
         return $this->categoryName;
     }
-
     public function createCategory() {
         return Crud::create($this->table, ["name" => $this->categoryName]);
     }
@@ -34,11 +33,9 @@ class Category {
     public function readAllCategories() {
         return Crud::readAll($this->table);
     }
-
     public function readCategoryById() {
         return Crud::readByCondition($this->table, "id", $this->id);
     }
-    
     public function countCategories() {
         return Crud::count($this->table);
     }

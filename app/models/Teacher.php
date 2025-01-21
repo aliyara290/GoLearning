@@ -24,7 +24,7 @@ class Teacher extends User
       LEFT JOIN categories cat ON c.category_id = cat.id
       LEFT JOIN course_tags ct ON c.id = ct.course_id
       LEFT JOIN tags t ON ct.tag_id = t.id
-      WHERE c.teacher_id = :teacher_id
+      WHERE c.teacher_id = :teacher_id AND c.status = 'active'
       GROUP BY c.id, u.firstName, u.lastName, cat.name
       ORDER BY c.created_at DESC;";
 
