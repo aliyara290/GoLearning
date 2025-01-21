@@ -8,6 +8,7 @@ use App\Models\Admin;
 use App\Models\Teacher;
 use App\Models\Student;
 use App\Models\Auth;
+use App\Core\Validator;
 
 class UserController
 {
@@ -48,27 +49,25 @@ class UserController
     public function register()
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["u_role"])) {
-            $firstName = $_POST["u_firstName"];
-            $lastName = $_POST["u_lastName"];
-            $email = $_POST["u_email"];
-            $username = $_POST["u_username"];
-            $password = $_POST["u_password"];
-            $role = $_POST["u_role"];
+            $firstName = Validator::sanitize($_POST["u_firstName"]);
+            $lastName = Validator::sanitize($_POST["u_lastName"]);
+            $email = Validator::validateEmail($_POST["u_email"]);
+            $username = Validator::validateUsername($_POST["u_username"]);
+            $password = Validator::validatePassword($_POST["u_password"]);
+            $role = Validator::sanitize($_POST["u_role"]);
             
             try {
                 $user = $this->userRole($firstName, $lastName, $email,$username, $password, $role);
-                header("location: /app/views/front/login.php");
-                exit();
                 if($user) {
-                    echo "yes";
-                    var_dump($user);
-                } else echo "no";
+                    header("location: /app/views/front/login.php");
+                    exit();
+                }
 
             } catch (PDOException $e) {
                 echo "Error: " . $e->getMessage();
             }
 
-        } else echo "\n" . "failed to register" . "\n";
+        }
     }
 
     public function login() {
@@ -88,19 +87,25 @@ class UserController
                         "role" => $check["role"],
                         "picture" => $check["picture"]
                     ];
+
+                    if($check["role"] === "admin") {
+                        header("location: /app/views/admin/dashboard.php");
+                        exit();
+                    } 
+                    elseif($check["role"] !== "admin") {
+                        header("location: /app/views/front/coursesList.php");
+                        exit();
+                    }
+                } elseif(!$check) {
+                    header("location: /app/views/front/loged.php");
                 }
-                if($check["role"] === "admin") {
-                    header("location: /app/views/admin/dashboard.php");
-                    exit();
-                } else {
-                    header("location: /app/views/front/coursesList.php");
-                    exit();
-                }
+
+                
             } catch (PDOException $e) {
                 echo "Error two: " . $e->getMessage();
             }
 
-        } else echo "failed to login";
+        }
     }
 
     public function getAllUers() {
@@ -108,7 +113,7 @@ class UserController
         $users = $adminModel->viewAllUsers();
         if($users) {
             return $users;
-        } else echo "failed to fetch users 2";
+        }
     }
 
     public function activeUser() {
